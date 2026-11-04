@@ -1,13 +1,17 @@
-name: Build Noor Al-Huda Android APK
+name: Build Noor Alhuda Android APK
 
 on:
-  workflow_dispatch:
   push:
-    branches: ["main"]
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: read
 
 jobs:
   build:
     runs-on: ubuntu-latest
+
     steps:
       - name: Get source code
         uses: actions/checkout@v4
@@ -16,17 +20,18 @@ jobs:
         uses: subosito/flutter-action@v2
         with:
           channel: stable
-          cache: true
+
+      - name: Create Android files
+        run: flutter create --platforms=android .
 
       - name: Install dependencies
         run: flutter pub get
 
-      - name: Build release APK
+      - name: Build APK
         run: flutter build apk --release
 
       - name: Upload APK
         uses: actions/upload-artifact@v4
         with:
-          name: noor-alhuda-android-apk
+          name: noor-alhuda-apk
           path: build/app/outputs/flutter-apk/app-release.apk
-          retention-days: 14
