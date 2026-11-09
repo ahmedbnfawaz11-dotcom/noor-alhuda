@@ -139,10 +139,18 @@ class SunniBooksPage extends StatelessWidget {
  const SunniBooksPage({super.key,required this.saved,required this.onToggle});
  @override Widget build(BuildContext c) {
   final grouped=<String,List<Book>>{};
+  final seenTitles=<String>{};
   for(final b in books.where((b)=>b.category=='كتب أهل السنة والجماعة'||b.category!='قسم الأطفال'&&b.category!='المسلمون الجدد')) {
-   grouped.putIfAbsent(b.author,()=>[]).add(b);
+   if(seenTitles.add(b.title)) grouped.putIfAbsent(b.author,()=>[]).add(b);
   }
-  final authors=grouped.keys.toList()..sort();
+  const preferredAuthors=['الإمام محمد بن إدريس الشافعي','الإمام محمد بن إسماعيل البخاري','الإمام مالك بن أنس','الإمام أحمد بن حنبل','الإمام ابن قيم الجوزية','شيخ الإسلام ابن تيمية'];
+  final authors=grouped.keys.toList()..sort((a,b){
+   final ai=preferredAuthors.indexOf(a), bi=preferredAuthors.indexOf(b);
+   if(ai>=0&&bi>=0)return ai.compareTo(bi);
+   if(ai>=0)return -1;
+   if(bi>=0)return 1;
+   return a.compareTo(b);
+  });
   return Directionality(textDirection:TextDirection.rtl,child:Scaffold(
    appBar:AppBar(title:const Text('كتب أهل السنة والجماعة')),
    body:ListView(padding:const EdgeInsets.all(12),children:[
