@@ -37,8 +37,11 @@ void main() {
     await tester.pumpAndSettle();
 
     expect(find.text('بيانات الفهرس'), findsOneWidget);
+    await tester.scrollUntilVisible(find.text('ملاحظاتي الخاصة'), 220, scrollable: find.byType(ListView).first);
     expect(find.text('ملاحظاتي الخاصة'), findsOneWidget);
-    await tester.enterText(find.byType(TextField), 'فائدة أراجعها لاحقاً');
+    await tester.scrollUntilVisible(find.byType(TextField), 220, scrollable: find.byType(ListView).first);
+    await tester.enterText(find.byType(TextField).first, 'فائدة أراجعها لاحقاً');
+    await tester.scrollUntilVisible(find.text('احفظ ملاحظاتي على الجهاز'), 220, scrollable: find.byType(ListView).first);
     await tester.tap(find.text('احفظ ملاحظاتي على الجهاز'));
     await tester.pumpAndSettle();
 
