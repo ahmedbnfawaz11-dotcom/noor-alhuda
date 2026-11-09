@@ -21,6 +21,8 @@ void main() {
   testWidgets('shows the home screen after first launch', (tester) async {
     await tester.pumpWidget(const NoorApp(firstRun: false));
     await tester.pumpAndSettle();
+    await tester.tap(find.text('دخول الموسوعة'));
+    await tester.pumpAndSettle();
 
     expect(find.text('أقسام الموسوعة'), findsOneWidget);
     expect(find.text('ابحث عن كتاب أو مؤلف أو قسم...'), findsOneWidget);
