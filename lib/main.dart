@@ -44,9 +44,19 @@ const books = <Book>[
  Book('البداية والنهاية','الإمام إسماعيل بن عمر ابن كثير','التاريخ والتراجم','مصنف تاريخي يتناول أخبار الأمم والسيرة والتاريخ الإسلامي.'),
  Book('نخبة الفكر','الحافظ ابن حجر العسقلاني','الحديث والآداب','متن مختصر في مصطلح الحديث وأقسامه.'),
  Book('تيسير مصطلح الحديث','الدكتور محمود الطحان','الحديث والآداب','مدخل تعليمي معاصر إلى مباحث مصطلح الحديث.'),
+ Book('النحو الواضح','علي الجارم ومصطفى أمين','علوم اللغة العربية','كتاب تعليمي في قواعد النحو العربي مع أمثلة وتدريبات.'), 
+ Book('شرح ابن عقيل على ألفية ابن مالك','بهاء الدين ابن عقيل','علوم اللغة العربية','شرح تراثي مشهور لأبواب النحو ومسائل الإعراب.'), 
+ Book('شذا العرف في فن الصرف','أحمد الحملاوي','علوم اللغة العربية','مدخل مرتب إلى علم الصرف وأوزان الكلمات والاشتقاق.'), 
+ Book('التطبيق الصرفي','عبده الراجحي','علوم اللغة العربية','عرض تعليمي لقواعد الصرف العربي وتطبيقاتها.'), 
+ Book('البلاغة الواضحة','علي الجارم ومصطفى أمين','علوم اللغة العربية','مدخل إلى علوم المعاني والبيان والبديع مع شواهد تطبيقية.'), 
+ Book('جواهر البلاغة','أحمد الهاشمي','علوم اللغة العربية','كتاب جامع لأبواب البلاغة العربية وعلومها الثلاثة.'), 
+ Book('دلائل الإعجاز','عبد القاهر الجرجاني','علوم اللغة العربية','مصنف أصيل في علم المعاني وأسرار النظم والإعجاز البياني.'), 
+ Book('أسرار البلاغة','عبد القاهر الجرجاني','علوم اللغة العربية','بحث تراثي في البيان والتشبيه والاستعارة ووجوه التصوير.'), 
+ Book('مغني اللبيب عن كتب الأعاريب','ابن هشام الأنصاري','علوم اللغة العربية','مرجع نحوي في الحروف والأدوات والتراكيب والإعراب.'), 
+ Book('قطر الندى وبل الصدى','ابن هشام الأنصاري','علوم اللغة العربية','متن مختصر في أبواب النحو مع شرح لمسائلها.')
 ];
 class Book { final String title,author,category,summary; const Book(this.title,this.author,this.category,this.summary); }
-const categories=['القرآن وعلومه','الحديث الشريف','العقيدة والتوحيد','الفقه والحديث','السيرة والشمائل','أصول الفقه','الحديث والآداب','الأذكار والرقائق','اللغة العربية','التاريخ والتراجم','المسلمون الجدد','قسم الأطفال'];
+const categories=['القرآن وعلومه','الحديث الشريف','العقيدة والتوحيد','الفقه والحديث','السيرة والشمائل','أصول الفقه','الحديث والآداب','الأذكار والرقائق','علوم اللغة العربية','كتب أهل السنة والجماعة','التاريخ والتراجم','المسلمون الجدد','قسم الأطفال'];
 
 Future<void> main() async { WidgetsFlutterBinding.ensureInitialized(); final p=await SharedPreferences.getInstance(); runApp(NoorApp(firstRun:!(p.getBool('seen_intro')??false))); }
 class NoorApp extends StatelessWidget { final bool firstRun; const NoorApp({super.key,required this.firstRun}); @override Widget build(BuildContext c)=>MaterialApp(title:'نور الهدى',debugShowCheckedModeBanner:false,theme:ThemeData(useMaterial3:true,scaffoldBackgroundColor:paper,colorScheme:ColorScheme.fromSeed(seedColor:green,primary:green,secondary:gold),appBarTheme:const AppBarTheme(backgroundColor:green,foregroundColor:Colors.white,centerTitle:true)),home:LaunchPage(firstRun:firstRun)); }
@@ -58,21 +68,15 @@ class LaunchPage extends StatelessWidget {
   Navigator.pushReplacement(c,MaterialPageRoute(builder:(_)=>firstRun?const WelcomePage():const HomePage()));
  }
  @override Widget build(BuildContext c)=>Directionality(textDirection:TextDirection.rtl,child:Scaffold(body:Container(width:double.infinity,decoration:const BoxDecoration(gradient:LinearGradient(begin:Alignment.topCenter,end:Alignment.bottomCenter,colors:[Color(0xFF1D5A46),Color(0xFF09271F)])),child:SafeArea(child:Padding(padding:const EdgeInsets.symmetric(horizontal:25,vertical:30),child:Column(mainAxisAlignment:MainAxisAlignment.center,children:[
-  const Icon(Icons.auto_awesome,color:gold,size:32),
-  const SizedBox(height:16),
+  const Icon(Icons.auto_awesome,color:gold,size:38),
+  const SizedBox(height:20),
   const Text('نُورُ الهُدَى',style:TextStyle(color:Colors.white,fontSize:38,fontWeight:FontWeight.bold)),
   const Text('الموسوعة الإسلامية',style:TextStyle(color:Color(0xFFE9D9B5),fontSize:17)),
-  const SizedBox(height:28),
-  Container(width:double.infinity,padding:const EdgeInsets.all(22),decoration:BoxDecoration(color:const Color(0x22FFFFFF),borderRadius:BorderRadius.circular(22),border:Border.all(color:gold,width:1.2)),child:const Column(children:[
-   Text('دعاء',style:TextStyle(color:gold,fontSize:18,fontWeight:FontWeight.bold)),
-   SizedBox(height:15),
-   Text('اللهم حُطَّ عني بهذا العمل خطيئةً، وارفعني به درجةً، ولوالديَّ، ولجميع المسلمين والمسلمات، الأحياء منهم والأموات.',textAlign:TextAlign.center,style:TextStyle(color:Colors.white,fontSize:20,height:2.0,fontWeight:FontWeight.w500)),
-   SizedBox(height:22),
-   Divider(color:gold),
-   SizedBox(height:18),
-   Text('﴿ وَقُلْ رَبِّ زِدْنِي عِلْمًا ﴾',textAlign:TextAlign.center,style:TextStyle(color:gold,fontSize:25,fontWeight:FontWeight.bold,height:1.8)),
+  const SizedBox(height:34),
+  Container(width:double.infinity,padding:const EdgeInsets.symmetric(horizontal:20,vertical:30),decoration:BoxDecoration(color:const Color(0x22FFFFFF),borderRadius:BorderRadius.circular(22),border:Border.all(color:gold,width:1.4)),child:const Column(children:[
+   Text('﴿ وَقُلْ رَبِّ زِدْنِي عِلْمًا ﴾',textAlign:TextAlign.center,style:TextStyle(color:gold,fontSize:29,fontWeight:FontWeight.bold,height:2)),
   ])),
-  const SizedBox(height:30),
+  const SizedBox(height:32),
   FilledButton(onPressed:()=>continueToApp(c),style:FilledButton.styleFrom(backgroundColor:gold,foregroundColor:green,minimumSize:const Size(double.infinity,54),shape:RoundedRectangleBorder(borderRadius:BorderRadius.circular(14))),child:Text(firstRun?'متابعة إلى الترحيب':'دخول الموسوعة',style:const TextStyle(fontSize:17,fontWeight:FontWeight.bold))),
  ]))))));
 }
@@ -81,7 +85,7 @@ class WelcomePage extends StatelessWidget {
  const WelcomePage({super.key});
  Future<void> enter(BuildContext c) async { final p=await SharedPreferences.getInstance(); await p.setBool('seen_intro',true); if(!c.mounted)return; Navigator.pushReplacement(c,MaterialPageRoute(builder:(_)=>const HomePage())); }
  @override Widget build(BuildContext c)=>Directionality(textDirection:TextDirection.rtl,child:Scaffold(body:Container(width:double.infinity,decoration:const BoxDecoration(gradient:LinearGradient(begin:Alignment.topCenter,end:Alignment.bottomCenter,colors:[Color(0xFF1D5A46),Color(0xFF09271F)])),child:SafeArea(child:Padding(padding:const EdgeInsets.all(25),child:Column(mainAxisAlignment:MainAxisAlignment.center,children:[
- const Icon(Icons.menu_book_rounded,color:gold,size:78),const SizedBox(height:20),const Text('بِسْمِ اللهِ الرَّحْمَٰنِ الرَّحِيمِ',style:TextStyle(color:gold,fontSize:21,fontWeight:FontWeight.bold)),const SizedBox(height:16),const Text('نُورُ الهُدَى',style:TextStyle(color:Colors.white,fontSize:40,fontWeight:FontWeight.bold)),const Text('الموسوعة الإسلامية',style:TextStyle(color:Color(0xFFE9D9B5),fontSize:18)),const SizedBox(height:28),const Divider(color:gold),const SizedBox(height:18),const Text('الحمد لله رب العالمين، والصلاة والسلام على نبينا محمد وعلى آله وصحبه أجمعين.',textAlign:TextAlign.center,style:TextStyle(color:Colors.white,height:2,fontSize:17)),const SizedBox(height:14),const Text('اللهم اجعل هذا العمل خالصاً لوجهك الكريم، وانفع به المسلمين، واجعله علماً نافعاً وصدقة جارية، وبارك في صاحبه والقائمين عليه.',textAlign:TextAlign.center,style:TextStyle(color:paper,height:2,fontSize:16)),const SizedBox(height:28),FilledButton(onPressed:()=>enter(c),style:FilledButton.styleFrom(backgroundColor:gold,foregroundColor:green,minimumSize:const Size(double.infinity,54)),child:const Text('ابدأ رحلتك في طلب العلم')),
+ const Icon(Icons.menu_book_rounded,color:gold,size:78),const SizedBox(height:20),const Text('بِسْمِ اللهِ الرَّحْمَٰنِ الرَّحِيمِ',style:TextStyle(color:gold,fontSize:21,fontWeight:FontWeight.bold)),const SizedBox(height:16),const Text('نُورُ الهُدَى',style:TextStyle(color:Colors.white,fontSize:40,fontWeight:FontWeight.bold)),const Text('الموسوعة الإسلامية',style:TextStyle(color:Color(0xFFE9D9B5),fontSize:18)),const SizedBox(height:28),const Divider(color:gold),const SizedBox(height:18),const Text('الحمد لله رب العالمين، والصلاة والسلام على نبينا محمد وعلى آله وصحبه أجمعين.',textAlign:TextAlign.center,style:TextStyle(color:Colors.white,height:2,fontSize:17)),const SizedBox(height:14),const Text('اللهم حُطَّ عني بهذا العمل خطيئةً، وارفعني به درجةً، ولوالديَّ، ولجميع المسلمين والمسلمات، الأحياء منهم والأموات.',textAlign:TextAlign.center,style:TextStyle(color:paper,height:2,fontSize:17,fontWeight:FontWeight.w500)),const SizedBox(height:28),FilledButton(onPressed:()=>enter(c),style:FilledButton.styleFrom(backgroundColor:gold,foregroundColor:green,minimumSize:const Size(double.infinity,54)),child:const Text('ابدأ رحلتك في طلب العلم')),
  ]))))));
 }
 
@@ -94,7 +98,7 @@ class _HomeState extends State<HomePage> {
  @override Widget build(BuildContext c){
  final matches=books.where((b)=>(b.title+' '+b.author+' '+b.category+' '+b.summary).contains(query.trim())).toList();
  return Directionality(textDirection:TextDirection.rtl,child:Scaffold(appBar:AppBar(title:const Column(children:[Text('نور الهدى',style:TextStyle(fontWeight:FontWeight.bold)),Text('الموسوعة الإسلامية',style:TextStyle(fontSize:11,color:Color(0xFFE8D9B7)))])),
- drawer:Drawer(child:Column(children:[Container(width:double.infinity,padding:const EdgeInsets.fromLTRB(20,55,20,25),color:green,child:const Column(children:[Icon(Icons.menu_book,color:gold,size:45),Text('نور الهدى',style:TextStyle(color:Colors.white,fontSize:25,fontWeight:FontWeight.bold))])),ListTile(leading:const Icon(Icons.home),title:const Text('الرئيسية'),onTap:(){Navigator.pop(c);setState(()=>tab=0);}),ListTile(leading:const Icon(Icons.bookmark_outline),title:const Text('مكتبتي الخاصة'),onTap:(){Navigator.pop(c);setState(()=>tab=1);}),ListTile(leading:const Icon(Icons.person_outline),title:const Text('المسلمون الجدد'),onTap:(){Navigator.pop(c);setState(()=>tab=2);}),ListTile(leading:const Icon(Icons.child_care),title:const Text('قسم الأطفال'),onTap:(){Navigator.pop(c);setState(()=>tab=3);})])),
+ drawer:Drawer(child:Column(children:[Container(width:double.infinity,padding:const EdgeInsets.fromLTRB(20,55,20,25),color:green,child:const Column(children:[Icon(Icons.menu_book,color:gold,size:45),Text('نور الهدى',style:TextStyle(color:Colors.white,fontSize:25,fontWeight:FontWeight.bold))])),ListTile(leading:const Icon(Icons.home),title:const Text('الرئيسية'),onTap:(){Navigator.pop(c);setState(()=>tab=0);}),ListTile(leading:const Icon(Icons.bookmark_outline),title:const Text('مكتبتي الخاصة'),onTap:(){Navigator.pop(c);setState(()=>tab=1);}),ListTile(leading:const Icon(Icons.person_outline),title:const Text('المسلمون الجدد'),onTap:(){Navigator.pop(c);setState(()=>tab=2);}),ListTile(leading:const Icon(Icons.child_care),title:const Text('قسم الأطفال'),onTap:(){Navigator.pop(c);setState(()=>tab=3);}),ListTile(leading:const Icon(Icons.collections_bookmark_outlined),title:const Text('كتب أهل السنة والجماعة'),onTap:(){Navigator.pop(c);Navigator.push(c,MaterialPageRoute(builder:(_)=>CategoryPage(category:'كتب أهل السنة والجماعة',saved:saved,onToggle:toggle)));})])),
  body:tab==1?Favorites(saved:saved,onToggle:toggle):tab==2?const NewMuslimPage():tab==3?const ChildrenPage():ListView(padding:const EdgeInsets.all(16),children:[
  Container(padding:const EdgeInsets.all(18),decoration:BoxDecoration(gradient:const LinearGradient(colors:[green,Color(0xFF1D5A46)]),borderRadius:BorderRadius.circular(22),border:Border.all(color:gold)),child:Column(crossAxisAlignment:CrossAxisAlignment.start,children:[const Text('﴿ وَقُل رَّبِّ زِدْنِي عِلْمًا ﴾',style:TextStyle(color:gold,fontSize:23,fontWeight:FontWeight.bold)),const SizedBox(height:7),const Text('بوابتك إلى مصادر العلم والتراث الإسلامي',style:TextStyle(color:Colors.white)),const SizedBox(height:15),TextField(onChanged:(v)=>setState(()=>query=v),decoration:InputDecoration(hintText:'ابحث عن كتاب أو مؤلف أو قسم...',prefixIcon:const Icon(Icons.search,color:green),filled:true,fillColor:paper,border:OutlineInputBorder(borderRadius:BorderRadius.circular(14),borderSide:BorderSide.none)))])),
  const SizedBox(height:20),const Heading('أقسام الموسوعة'),const SizedBox(height:10),
@@ -114,7 +118,7 @@ class BookTile extends StatelessWidget {
 }
 class CategoryPage extends StatelessWidget {
  final String category;final Set<String> saved;final Future<void> Function(Book) onToggle;const CategoryPage({super.key,required this.category,required this.saved,required this.onToggle});
- @override Widget build(BuildContext c){final list=books.where((b)=>b.category==category||(category=='الحديث الشريف'&&b.category=='الحديث والآداب')).toList();return Directionality(textDirection:TextDirection.rtl,child:Scaffold(appBar:AppBar(title:Text(category)),body:list.isEmpty?const Center(child:Text('سيضاف فهرس هذا القسم بعد مراجعة مصادره.')):ListView(padding:const EdgeInsets.all(12),children:list.map((b)=>BookTile(book:b,saved:saved.contains(b.title),onSave:()=>onToggle(b))).toList())));}
+ @override Widget build(BuildContext c){final list=category=='كتب أهل السنة والجماعة'?books.toList():books.where((b)=>b.category==category||(category=='الحديث الشريف'&&b.category=='الحديث والآداب')).toList();return Directionality(textDirection:TextDirection.rtl,child:Scaffold(appBar:AppBar(title:Text(category)),body:list.isEmpty?const Center(child:Text('سيضاف فهرس هذا القسم بعد مراجعة مصادره.')):ListView(padding:const EdgeInsets.all(12),children:list.map((b)=>BookTile(book:b,saved:saved.contains(b.title),onSave:()=>onToggle(b))).toList())));}
 }
 class BookDetails extends StatelessWidget {
  final Book book;final bool saved;final VoidCallback onSave;const BookDetails({super.key,required this.book,required this.saved,required this.onSave});
