@@ -49,7 +49,33 @@ class Book { final String title,author,category,summary; const Book(this.title,t
 const categories=['القرآن وعلومه','الحديث الشريف','العقيدة والتوحيد','الفقه والحديث','السيرة والشمائل','أصول الفقه','الحديث والآداب','الأذكار والرقائق','اللغة العربية','التاريخ والتراجم','المسلمون الجدد','قسم الأطفال'];
 
 Future<void> main() async { WidgetsFlutterBinding.ensureInitialized(); final p=await SharedPreferences.getInstance(); runApp(NoorApp(firstRun:!(p.getBool('seen_intro')??false))); }
-class NoorApp extends StatelessWidget { final bool firstRun; const NoorApp({super.key,required this.firstRun}); @override Widget build(BuildContext c)=>MaterialApp(title:'نور الهدى',debugShowCheckedModeBanner:false,theme:ThemeData(useMaterial3:true,scaffoldBackgroundColor:paper,colorScheme:ColorScheme.fromSeed(seedColor:green,primary:green,secondary:gold),appBarTheme:const AppBarTheme(backgroundColor:green,foregroundColor:Colors.white,centerTitle:true)),home:firstRun?const WelcomePage():const HomePage()); }
+class NoorApp extends StatelessWidget { final bool firstRun; const NoorApp({super.key,required this.firstRun}); @override Widget build(BuildContext c)=>MaterialApp(title:'نور الهدى',debugShowCheckedModeBanner:false,theme:ThemeData(useMaterial3:true,scaffoldBackgroundColor:paper,colorScheme:ColorScheme.fromSeed(seedColor:green,primary:green,secondary:gold),appBarTheme:const AppBarTheme(backgroundColor:green,foregroundColor:Colors.white,centerTitle:true)),home:LaunchPage(firstRun:firstRun)); }
+
+class LaunchPage extends StatelessWidget {
+ final bool firstRun;
+ const LaunchPage({super.key,required this.firstRun});
+ void continueToApp(BuildContext c) {
+  Navigator.pushReplacement(c,MaterialPageRoute(builder:(_)=>firstRun?const WelcomePage():const HomePage()));
+ }
+ @override Widget build(BuildContext c)=>Directionality(textDirection:TextDirection.rtl,child:Scaffold(body:Container(width:double.infinity,decoration:const BoxDecoration(gradient:LinearGradient(begin:Alignment.topCenter,end:Alignment.bottomCenter,colors:[Color(0xFF1D5A46),Color(0xFF09271F)])),child:SafeArea(child:Padding(padding:const EdgeInsets.symmetric(horizontal:25,vertical:30),child:Column(mainAxisAlignment:MainAxisAlignment.center,children:[
+  const Icon(Icons.auto_awesome,color:gold,size:32),
+  const SizedBox(height:16),
+  const Text('نُورُ الهُدَى',style:TextStyle(color:Colors.white,fontSize:38,fontWeight:FontWeight.bold)),
+  const Text('الموسوعة الإسلامية',style:TextStyle(color:Color(0xFFE9D9B5),fontSize:17)),
+  const SizedBox(height:28),
+  Container(width:double.infinity,padding:const EdgeInsets.all(22),decoration:BoxDecoration(color:const Color(0x22FFFFFF),borderRadius:BorderRadius.circular(22),border:Border.all(color:gold,width:1.2)),child:const Column(children:[
+   Text('دعاء',style:TextStyle(color:gold,fontSize:18,fontWeight:FontWeight.bold)),
+   SizedBox(height:15),
+   Text('اللهم حُطَّ عني بهذا العمل خطيئةً، وارفعني به درجةً، ولوالديَّ، ولجميع المسلمين والمسلمات، الأحياء منهم والأموات.',textAlign:TextAlign.center,style:TextStyle(color:Colors.white,fontSize:20,height:2.0,fontWeight:FontWeight.w500)),
+   SizedBox(height:22),
+   Divider(color:gold),
+   SizedBox(height:18),
+   Text('﴿ وَقُلْ رَبِّ زِدْنِي عِلْمًا ﴾',textAlign:TextAlign.center,style:TextStyle(color:gold,fontSize:25,fontWeight:FontWeight.bold,height:1.8)),
+  ])),
+  const SizedBox(height:30),
+  FilledButton(onPressed:()=>continueToApp(c),style:FilledButton.styleFrom(backgroundColor:gold,foregroundColor:green,minimumSize:const Size(double.infinity,54),shape:RoundedRectangleBorder(borderRadius:BorderRadius.circular(14))),child:Text(firstRun?'متابعة إلى الترحيب':'دخول الموسوعة',style:const TextStyle(fontSize:17,fontWeight:FontWeight.bold))),
+ ]))))));
+}
 
 class WelcomePage extends StatelessWidget {
  const WelcomePage({super.key});
