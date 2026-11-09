@@ -60,6 +60,7 @@ void main() {
     await tester.enterText(find.byType(TextField).first, 'رِيَاضُ الصَّالِحِينَ');
     await tester.pumpAndSettle();
 
+    await tester.scrollUntilVisible(find.text('رياض الصالحين').first, 250);
     expect(find.text('رياض الصالحين'), findsWidgets);
   });
 
