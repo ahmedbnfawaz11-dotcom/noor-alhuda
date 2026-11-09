@@ -83,7 +83,7 @@ final catalogBooks = books.fold<List<Book>>([], (items, book) {
 
 String normalizeArabic(String value) => value
  .toLowerCase()
- .replaceAll(RegExp(r'[\\u064B-\\u065F\\u0670\\u06D6-\\u06ED]'),'')
+ .replaceAll(RegExp(r'[\u064B-\u065F\u0670\u06D6-\u06ED]'),'')
  .replaceAll('ـ','')
  .replaceAll('أ','ا')
  .replaceAll('إ','ا')
