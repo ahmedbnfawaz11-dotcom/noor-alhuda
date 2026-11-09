@@ -81,6 +81,15 @@ final catalogBooks = books.fold<List<Book>>([], (items, book) {
  return items;
 });
 
+String normalizeArabic(String value) => value
+ .toLowerCase()
+ .replaceAll(RegExp(r'[\\u064B-\\u065F\\u0670\\u06D6-\\u06ED]'),'')
+ .replaceAll('ـ','')
+ .replaceAll('أ','ا')
+ .replaceAll('إ','ا')
+ .replaceAll('آ','ا')
+ .replaceAll('ى','ي');
+
 class Book { final String title,author,category,summary; const Book(this.title,this.author,this.category,this.summary); }
 const categories=['القرآن وعلومه','الحديث الشريف','العقيدة والتوحيد','الفقه والحديث','السيرة والشمائل','أصول الفقه','الحديث والآداب','الأذكار والرقائق','علوم اللغة العربية','كتب أهل السنة والجماعة','التاريخ والتراجم','المسلمون الجدد','قسم الأطفال'];
 
@@ -122,7 +131,7 @@ class _HomeState extends State<HomePage> {
  Future<void> load() async {final p=await SharedPreferences.getInstance();if(mounted)setState(()=>saved=(p.getStringList('saved_books')??[]).toSet());}
  Future<void> toggle(Book b) async {setState((){if(saved.contains(b.title)){saved.remove(b.title);}else{saved.add(b.title);}});final p=await SharedPreferences.getInstance();await p.setStringList('saved_books',saved.toList());}
  @override Widget build(BuildContext c){
- final matches=catalogBooks.where((b)=>(b.title+' '+b.author+' '+b.category+' '+b.summary).contains(query.trim())).toList();
+ final normalizedQuery=normalizeArabic(query.trim()); final matches=catalogBooks.where((b)=>normalizeArabic(b.title+' '+b.author+' '+b.category+' '+b.summary).contains(normalizedQuery)).toList();
  return Directionality(textDirection:TextDirection.rtl,child:Scaffold(appBar:AppBar(title:const Column(children:[Text('نور الهدى',style:TextStyle(fontWeight:FontWeight.bold)),Text('الموسوعة الإسلامية',style:TextStyle(fontSize:11,color:Color(0xFFE8D9B7)))])),
  drawer:Drawer(child:Column(children:[Container(width:double.infinity,padding:const EdgeInsets.fromLTRB(20,55,20,25),color:green,child:const Column(children:[Icon(Icons.menu_book,color:gold,size:45),Text('نور الهدى',style:TextStyle(color:Colors.white,fontSize:25,fontWeight:FontWeight.bold))])),ListTile(leading:const Icon(Icons.home),title:const Text('الرئيسية'),onTap:(){Navigator.pop(c);setState(()=>tab=0);}),ListTile(leading:const Icon(Icons.bookmark_outline),title:const Text('مكتبتي الخاصة'),onTap:(){Navigator.pop(c);setState(()=>tab=1);}),ListTile(leading:const Icon(Icons.person_outline),title:const Text('المسلمون الجدد'),onTap:(){Navigator.pop(c);setState(()=>tab=2);}),ListTile(leading:const Icon(Icons.child_care),title:const Text('قسم الأطفال'),onTap:(){Navigator.pop(c);setState(()=>tab=3);}),ListTile(leading:const Icon(Icons.collections_bookmark_outlined),title:const Text('كتب أهل السنة والجماعة'),onTap:(){Navigator.pop(c);Navigator.push(c,MaterialPageRoute(builder:(_)=>SunniBooksPage(saved:saved,onToggle:toggle)));}),ListTile(leading:const Icon(Icons.info_outline),title:const Text('حول الموسوعة ومصادرها'),onTap:(){Navigator.pop(c);Navigator.push(c,MaterialPageRoute(builder:(_)=>const InfoPage(title:'حول نور الهدى',body:'نور الهدى موسوعة إسلامية تهدف إلى تسهيل الوصول إلى فهارس الكتب والمواد العلمية الموثوقة.\n\nلا يُدرج نص كتاب كامل إلا بعد التحقق من مصدر النسخة وبيانات الطبعة والمحقق وحقوق إعادة التوزيع.\n\nقد تظهر بعض الكتب في الفهرس ببيانات تعريفية فقط إلى حين توفير نص رقمي موثوق ومسموح بإتاحته دون اتصال.\n\nنسأل الله أن يجعل هذا العمل خالصاً نافعاً.')));})])),
  body:tab==1?Favorites(saved:saved,onToggle:toggle):tab==2?const NewMuslimPage():tab==3?const ChildrenPage():ListView(padding:const EdgeInsets.all(16),children:[
