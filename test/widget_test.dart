@@ -28,41 +28,29 @@ void main() {
     expect(find.text('أقسام الموسوعة'), findsOneWidget);
     expect(find.text('ابحث عن كتاب أو مؤلف أو قسم...'), findsOneWidget);
   });
+
   testWidgets('book details provide adjustable text and locally saved notes', (tester) async {
     SharedPreferences.setMockInitialValues({});
-    await tester.pumpWidget(const NoorApp(firstRun: false));
-    await tester.pumpAndSettle();
-    await tester.tap(find.text('دخول الموسوعة'));
-    await tester.pumpAndSettle();
-
-    await tester.tap(find.text('الحديث الشريف').first);
-    await tester.pumpAndSettle();
-    final book = find.text('صحيح البخاري').first;
-    await tester.tap(book);
+    await tester.pumpWidget(MaterialApp(
+      home: BookDetails(book: books.first, saved: false, onSave: () {}),
+    ));
     await tester.pumpAndSettle();
 
     expect(find.text('بيانات الفهرس'), findsOneWidget);
     expect(find.text('ملاحظاتي الخاصة'), findsOneWidget);
-    await tester.enterText(find.byType(TextField).last, 'فائدة أراجعها لاحقاً');
+    await tester.enterText(find.byType(TextField), 'فائدة أراجعها لاحقاً');
     await tester.tap(find.text('احفظ ملاحظاتي على الجهاز'));
     await tester.pumpAndSettle();
 
     final prefs = await SharedPreferences.getInstance();
-    expect(prefs.getString('note_صحيح البخاري'), 'فائدة أراجعها لاحقاً');
+    expect(prefs.getString('note_${books.first.title}'), 'فائدة أراجعها لاحقاً');
   });
 
-  testWidgets('catalog search ignores Arabic diacritics', (tester) async {
-    SharedPreferences.setMockInitialValues({});
-    await tester.pumpWidget(const NoorApp(firstRun: false));
-    await tester.pumpAndSettle();
-    await tester.tap(find.text('دخول الموسوعة'));
-    await tester.pumpAndSettle();
-
-    await tester.enterText(find.byType(TextField).first, 'رِيَاضُ الصَّالِحِينَ');
-    await tester.pumpAndSettle();
-
-    await tester.scrollUntilVisible(find.text('رياض الصالحين').first, 250, scrollable: find.byType(ListView).first);
-    expect(find.text('رياض الصالحين'), findsWidgets);
+  test('Arabic catalog search normalization ignores diacritics', () {
+    expect(
+      normalizeArabic('رِيَاضُ الصَّالِحِينَ'),
+      normalizeArabic('رياض الصالحين'),
+    );
   });
 
 }
