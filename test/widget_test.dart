@@ -35,8 +35,9 @@ void main() {
     await tester.tap(find.text('دخول الموسوعة'));
     await tester.pumpAndSettle();
 
+    await tester.tap(find.text('الحديث الشريف').first);
+    await tester.pumpAndSettle();
     final book = find.text('صحيح البخاري').first;
-    await tester.scrollUntilVisible(book, 300);
     await tester.tap(book);
     await tester.pumpAndSettle();
 
@@ -60,7 +61,7 @@ void main() {
     await tester.enterText(find.byType(TextField).first, 'رِيَاضُ الصَّالِحِينَ');
     await tester.pumpAndSettle();
 
-    await tester.scrollUntilVisible(find.text('رياض الصالحين').first, 250);
+    await tester.scrollUntilVisible(find.text('رياض الصالحين').first, 250, scrollable: find.byType(ListView).first);
     expect(find.text('رياض الصالحين'), findsWidgets);
   });
 
