@@ -40,7 +40,7 @@ class _HomeState extends State<HomePage> {
  final matches=books.where((b)=>(b.title+' '+b.author+' '+b.category).contains(query.trim())).toList();
  return Directionality(textDirection:TextDirection.rtl,child:Scaffold(appBar:AppBar(title:const Column(children:[Text('نور الهدى',style:TextStyle(fontWeight:FontWeight.bold)),Text('الموسوعة الإسلامية',style:TextStyle(fontSize:11,color:Color(0xFFE8D9B7)))])),
  drawer:Drawer(child:Column(children:[Container(width:double.infinity,padding:const EdgeInsets.fromLTRB(20,55,20,25),color:green,child:const Column(children:[Icon(Icons.menu_book,color:gold,size:45),Text('نور الهدى',style:TextStyle(color:Colors.white,fontSize:25,fontWeight:FontWeight.bold))])),ListTile(leading:const Icon(Icons.home),title:const Text('الرئيسية'),onTap:(){Navigator.pop(c);setState(()=>tab=0);}),ListTile(leading:const Icon(Icons.bookmark_outline),title:const Text('مكتبتي الخاصة'),onTap:(){Navigator.pop(c);setState(()=>tab=1);}),ListTile(leading:const Icon(Icons.person_outline),title:const Text('المسلمون الجدد'),onTap:(){Navigator.pop(c);setState(()=>tab=2);}),ListTile(leading:const Icon(Icons.child_care),title:const Text('قسم الأطفال'),onTap:(){Navigator.pop(c);setState(()=>tab=3);})])),
- body:tab==1?Favorites(saved:saved,onToggle:toggle):tab==2?const InfoPage(title:'دليل المسلم الجديد',body:'سيضم هذا القسم دروساً متدرجة في أركان الإسلام والإيمان والطهارة والصلاة وقراءة القرآن، مع مراجعة علمية وترجمة إلى لغات متعددة.'):tab==3?const InfoPage(title:'براعم نور الهدى',body:'قسم تربوي للأطفال لتعليم الوضوء والصلاة والأذكار وقصص الأنبياء. ستستخدم فيه رسومات تعليمية بلا ملامح وجه ظاهرة.'):ListView(padding:const EdgeInsets.all(16),children:[
+ body:tab==1?Favorites(saved:saved,onToggle:toggle):tab==2?const NewMuslimPage():tab==3?const ChildrenPage():ListView(padding:const EdgeInsets.all(16),children:[
  Container(padding:const EdgeInsets.all(18),decoration:BoxDecoration(gradient:const LinearGradient(colors:[green,Color(0xFF1D5A46)]),borderRadius:BorderRadius.circular(22),border:Border.all(color:gold)),child:Column(crossAxisAlignment:CrossAxisAlignment.start,children:[const Text('﴿ وَقُل رَّبِّ زِدْنِي عِلْمًا ﴾',style:TextStyle(color:gold,fontSize:23,fontWeight:FontWeight.bold)),const SizedBox(height:7),const Text('بوابتك إلى مصادر العلم والتراث الإسلامي',style:TextStyle(color:Colors.white)),const SizedBox(height:15),TextField(onChanged:(v)=>setState(()=>query=v),decoration:InputDecoration(hintText:'ابحث عن كتاب أو مؤلف أو قسم...',prefixIcon:const Icon(Icons.search,color:green),filled:true,fillColor:paper,border:OutlineInputBorder(borderRadius:BorderRadius.circular(14),borderSide:BorderSide.none)))])),
  const SizedBox(height:20),const Heading('أقسام الموسوعة'),const SizedBox(height:10),
  GridView.builder(shrinkWrap:true,physics:const NeverScrollableScrollPhysics(),itemCount:categories.length,gridDelegate:const SliverGridDelegateWithFixedCrossAxisCount(crossAxisCount:2,mainAxisSpacing:9,crossAxisSpacing:9,childAspectRatio:2.05),itemBuilder:(ctx,i)=>InkWell(onTap:()=>Navigator.push(ctx,MaterialPageRoute(builder:(_)=>CategoryPage(category:categories[i],saved:saved,onToggle:toggle))),child:Container(decoration:BoxDecoration(color:Colors.white,borderRadius:BorderRadius.circular(14),border:Border.all(color:const Color(0xFFDDCBA7))),child:Center(child:Text(categories[i],textAlign:TextAlign.center,style:const TextStyle(color:green,fontWeight:FontWeight.bold)))))),
@@ -66,5 +66,39 @@ class BookDetails extends StatelessWidget {
  @override Widget build(BuildContext c)=>Directionality(textDirection:TextDirection.rtl,child:Scaffold(appBar:AppBar(title:const Text('بيانات الكتاب')),body:ListView(padding:const EdgeInsets.all(20),children:[Container(height:150,decoration:BoxDecoration(color:green,borderRadius:BorderRadius.circular(18),border:Border.all(color:gold)),child:const Icon(Icons.menu_book,color:gold,size:75)),const SizedBox(height:20),Text(book.title,textAlign:TextAlign.center,style:const TextStyle(color:green,fontSize:25,fontWeight:FontWeight.bold)),const SizedBox(height:8),Text(book.author,textAlign:TextAlign.center),const Divider(height:30),const Heading('نبذة عن الكتاب'),Text(book.summary,style:const TextStyle(fontSize:16,height:1.9)),const SizedBox(height:18),FilledButton.icon(onPressed:onSave,icon:Icon(saved?Icons.bookmark:Icons.bookmark_add_outlined),label:Text(saved?'إزالة من مكتبتي':'أضف إلى مكتبتي')),const SizedBox(height:12),const Text('النص الكامل غير مرفق في هذه النسخة بعد. لن نعرض نصاً منسوباً إلى كتاب قبل توفير نسخة موثوقة والتحقق منها.',textAlign:TextAlign.center,style:TextStyle(color:Colors.brown,height:1.8))])));
  }
 }
-class Favorites extends StatelessWidget {final Set<String> saved;final Future<void> Function(Book) onToggle;const Favorites({super.key,required this.saved,required this.onToggle});@override Widget build(BuildContext c){final list=books.where((b)=>saved.contains(b.title)).toList();return Directionality(textDirection:TextDirection.rtl,child:Scaffold(appBar:AppBar(title:const Text('مكتبتي الخاصة')),body:list.isEmpty?const Center(child:Text('لم تضف كتباً إلى مكتبتك بعد.')):ListView(padding:const EdgeInsets.all(12),children:list.map((b)=>BookTile(book:b,saved:true,onSave:()=>onToggle(b))).toList())));}}
+class Favorites extends StatelessWidget {final Set<String> saved;final Future<void> Function(Book) onToggle;const Favorites({super.key,required this.saved,required this.onToggle});@override Widget build(BuildContext c){final list=books.where((b)=>saved.contains(b.title)).toList();return list.isEmpty?const Center(child:Text('لم تضف كتباً إلى مكتبتك بعد.')):ListView(padding:const EdgeInsets.all(12),children:list.map((b)=>BookTile(book:b,saved:true,onSave:()=>onToggle(b))).toList());}}
 class InfoPage extends StatelessWidget {final String title,body;const InfoPage({super.key,required this.title,required this.body});@override Widget build(BuildContext c)=>Directionality(textDirection:TextDirection.rtl,child:Scaffold(appBar:AppBar(title:Text(title)),body:Padding(padding:const EdgeInsets.all(22),child:Text(body,style:const TextStyle(fontSize:17,height:2)))));}
+
+class NewMuslimPage extends StatelessWidget {
+ const NewMuslimPage({super.key});
+ static const lessons = <String, String>{
+  'معنى الشهادتين':'التعرّف إلى معنى لا إله إلا الله وأن محمداً رسول الله، وما تدلان عليه من إفراد الله بالعبادة واتباع الرسول صلى الله عليه وسلم.',
+  'أركان الإسلام':'الشهادتان، وإقامة الصلاة، وإيتاء الزكاة، وصوم رمضان، وحج البيت لمن استطاع إليه سبيلاً.',
+  'الطهارة والوضوء':'مقدمة مبسطة عن الطهارة، ثم تعلم صفة الوضوء خطوة خطوة.',
+  'تعلم الصلاة':'التعرف إلى أوقات الصلاة وشروطها وأركانها، ثم تطبيق عملي متدرج.',
+  'قصار السور':'بدء التعلم بسور قصيرة مع الاستماع إلى تلاوة صحيحة وتصحيح النطق.',
+ };
+ @override Widget build(BuildContext c)=>Directionality(textDirection:TextDirection.rtl,child:ListView(padding:const EdgeInsets.all(16),children:[
+  const Heading('مرحباً بك في طريق العلم'),
+  const SizedBox(height:8),
+  const Text('دروس مرتبة للمسلم الجديد، بلغة سهلة وخطوات متدرجة. ستراجع المواد علمياً قبل نشر الدروس التفصيلية.',style:TextStyle(height:1.9)),
+  const SizedBox(height:12),
+  ...lessons.entries.map((e)=>Card(child:ExpansionTile(leading:const Icon(Icons.menu_book,color:gold),title:Text(e.key,style:const TextStyle(color:green,fontWeight:FontWeight.bold)),children:[Padding(padding:const EdgeInsets.all(16),child:Text(e.value,style:const TextStyle(height:1.9)))]))),
+ ]));
+}
+
+class ChildrenPage extends StatelessWidget {
+ const ChildrenPage({super.key});
+ static const activities = <String, List<String>>{
+  'تعلم الوضوء':['غسل الكفين','المضمضة والاستنشاق','غسل الوجه','غسل اليدين إلى المرفقين','مسح الرأس والأذنين','غسل القدمين إلى الكعبين'],
+  'تعلم الصلاة':['التعرف إلى القبلة ودخول الوقت','تكبيرة الإحرام','قراءة الفاتحة وما تيسر','الركوع والرفع منه','السجود والجلوس بين السجدتين','التشهد والسلام'],
+  'آداب المسلم الصغير':['الصدق والأمانة','بر الوالدين','الرفق بالناس','المحافظة على النظافة','إفشاء السلام'],
+ };
+ @override Widget build(BuildContext c)=>Directionality(textDirection:TextDirection.rtl,child:ListView(padding:const EdgeInsets.all(16),children:[
+  const Heading('براعم نور الهدى'),
+  const SizedBox(height:8),
+  const Text('تعلم ممتع ومتدرج للصغار، مع رسومات تعليمية بلا ملامح وجه ظاهرة؛ مثل الشخصيات الظلية أو المرسومة من الخلف.',style:TextStyle(height:1.9)),
+  const SizedBox(height:12),
+  ...activities.entries.map((e)=>Card(child:ExpansionTile(leading:const Icon(Icons.auto_stories,color:gold),title:Text(e.key,style:const TextStyle(color:green,fontWeight:FontWeight.bold)),children:e.value.asMap().entries.map((step)=>ListTile(leading:CircleAvatar(backgroundColor:green,foregroundColor:gold,child:Text('${step.key+1}')),title:Text(step.value))).toList()))),
+ ]));
+}
