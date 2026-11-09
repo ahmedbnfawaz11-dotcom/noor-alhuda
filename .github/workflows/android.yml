@@ -22,7 +22,9 @@ jobs:
           cache: true
 
       - name: Create Android platform files
-        run: flutter create --platforms=android .
+        run: |
+          flutter create --org com.nooralhuda --project-name noor_alhuda --platforms=android .
+          sed -i 's/android:label="noor_alhuda"/android:label="نور الهدى"/' android/app/src/main/AndroidManifest.xml
 
       - name: Install dependencies
         run: flutter pub get
