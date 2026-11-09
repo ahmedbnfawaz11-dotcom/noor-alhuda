@@ -176,10 +176,81 @@ class CategoryPage extends StatelessWidget {
  final String category;final Set<String> saved;final Future<void> Function(Book) onToggle;const CategoryPage({super.key,required this.category,required this.saved,required this.onToggle});
  @override Widget build(BuildContext c){final list=category=='كتب أهل السنة والجماعة'?books.toList():catalogBooks.where((b)=>b.category==category||(category=='الحديث الشريف'&&b.category=='الحديث والآداب')).toList();return Directionality(textDirection:TextDirection.rtl,child:Scaffold(appBar:AppBar(title:Text(category)),body:list.isEmpty?const Center(child:Text('سيضاف فهرس هذا القسم بعد مراجعة مصادره.')):ListView(padding:const EdgeInsets.all(12),children:list.map((b)=>BookTile(book:b,saved:saved.contains(b.title),onSave:()=>onToggle(b))).toList())));}
 }
-class BookDetails extends StatelessWidget {
- final Book book;final bool saved;final VoidCallback onSave;const BookDetails({super.key,required this.book,required this.saved,required this.onSave});
- @override Widget build(BuildContext c)=>Directionality(textDirection:TextDirection.rtl,child:Scaffold(appBar:AppBar(title:const Text('بيانات الكتاب')),body:ListView(padding:const EdgeInsets.all(20),children:[Container(height:150,decoration:BoxDecoration(color:green,borderRadius:BorderRadius.circular(18),border:Border.all(color:gold)),child:const Icon(Icons.menu_book,color:gold,size:75)),const SizedBox(height:20),Text(book.title,textAlign:TextAlign.center,style:const TextStyle(color:green,fontSize:25,fontWeight:FontWeight.bold)),const SizedBox(height:8),Text(book.author,textAlign:TextAlign.center),const Divider(height:30),const Heading('نبذة عن الكتاب'),Text(book.summary,style:const TextStyle(fontSize:16,height:1.9)),const SizedBox(height:18),FilledButton.icon(onPressed:onSave,icon:Icon(saved?Icons.bookmark:Icons.bookmark_add_outlined),label:Text(saved?'إزالة من مكتبتي':'أضف إلى مكتبتي')),const SizedBox(height:12),const Text('النص الكامل غير مرفق في هذه النسخة بعد. لن نعرض نصاً منسوباً إلى كتاب قبل توفير نسخة موثوقة والتحقق منها.',textAlign:TextAlign.center,style:TextStyle(color:Colors.brown,height:1.8))])));
+class BookDetails extends StatefulWidget {
+ final Book book;
+ final bool saved;
+ final VoidCallback onSave;
+ const BookDetails({super.key,required this.book,required this.saved,required this.onSave});
+ @override State<BookDetails> createState()=>_BookDetailsState();
+}
+
+class _BookDetailsState extends State<BookDetails> {
+ final TextEditingController noteController=TextEditingController();
+ double fontSize=17;
+ bool noteLoaded=false;
+ bool noteSaving=false;
+ @override void initState(){super.initState();loadNote();}
+ Future<void> loadNote() async {
+  final p=await SharedPreferences.getInstance();
+  final value=p.getString('note_${widget.book.title}')??'';
+  if(!mounted)return;
+  noteController.text=value;
+  setState(()=>noteLoaded=true);
  }
+ Future<void> saveNote() async {
+  setState(()=>noteSaving=true);
+  final p=await SharedPreferences.getInstance();
+  await p.setString('note_${widget.book.title}',noteController.text);
+  if(!mounted)return;
+  setState(()=>noteSaving=false);
+  ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content:Text('حُفظت ملاحظتك على هذا الجهاز.')));
+ }
+ @override void dispose(){noteController.dispose();super.dispose();}
+ @override Widget build(BuildContext c)=>Directionality(textDirection:TextDirection.rtl,child:Scaffold(
+  appBar:AppBar(title:const Text('بيانات الكتاب')),
+  body:ListView(padding:const EdgeInsets.all(18),children:[
+   Container(height:142,decoration:BoxDecoration(gradient:const LinearGradient(colors:[green,Color(0xFF1D5A46)]),borderRadius:BorderRadius.circular(18),border:Border.all(color:gold)),child:const Icon(Icons.menu_book,color:gold,size:74)),
+   const SizedBox(height:18),
+   Text(widget.book.title,textAlign:TextAlign.center,style:const TextStyle(color:green,fontSize:25,fontWeight:FontWeight.bold)),
+   const SizedBox(height:8),
+   Text(widget.book.author,textAlign:TextAlign.center,style:const TextStyle(fontSize:15)),
+   const SizedBox(height:18),
+   const Heading('بيانات الفهرس'),
+   const SizedBox(height:8),
+   _BookMetaRow(label:'القسم',value:widget.book.category),
+   _BookMetaRow(label:'المؤلف أو صاحب الرواية',value:widget.book.author),
+   const SizedBox(height:14),
+   const Heading('نبذة تعريفية'),
+   const SizedBox(height:8),
+   Row(children:[
+    const Text('حجم الخط'),
+    Expanded(child:Slider(min:14,max:26,divisions:6,value:fontSize,onChanged:(v)=>setState(()=>fontSize=v))),
+    Text(fontSize.round().toString()),
+   ]),
+   SelectableText(widget.book.summary,style:TextStyle(fontSize:fontSize,height:2.0,color:Colors.black87)),
+   const SizedBox(height:18),
+   FilledButton.icon(onPressed:widget.onSave,icon:Icon(widget.saved?Icons.bookmark:Icons.bookmark_add_outlined),label:Text(widget.saved?'إزالة من مكتبتي':'أضف إلى مكتبتي')),
+   const SizedBox(height:20),
+   const Heading('ملاحظاتي الخاصة'),
+   const SizedBox(height:8),
+   TextField(controller:noteController,minLines:3,maxLines:7,decoration:InputDecoration(hintText:'اكتب فوائدك أو ملاحظاتك حول هذا الكتاب...',filled:true,fillColor:Colors.white,border:OutlineInputBorder(borderRadius:BorderRadius.circular(12)))),
+   const SizedBox(height:8),
+   FilledButton.tonalIcon(onPressed:!noteLoaded||noteSaving?null:saveNote,icon:const Icon(Icons.save_outlined),label:Text(noteSaving?'جارٍ الحفظ...':'احفظ ملاحظاتي على الجهاز')),
+   const SizedBox(height:18),
+   Container(padding:const EdgeInsets.all(14),decoration:BoxDecoration(color:const Color(0xFFFFF4DD),borderRadius:BorderRadius.circular(12),border:Border.all(color:gold)),child:const Text('تنبيه علمي: هذه الصفحة تعرض بيانات الفهرس والنبذة فقط. النص الكامل للكتاب غير مرفق في هذه النسخة. لن ننسب نصوصاً إلى مؤلفيها قبل التحقق من النسخة والطبعة والمصدر وحقوق الإتاحة.',style:TextStyle(color:Colors.brown,height:1.9))),
+  ]),
+ ));
+}
+
+class _BookMetaRow extends StatelessWidget {
+ final String label,value;
+ const _BookMetaRow({required this.label,required this.value});
+ @override Widget build(BuildContext c)=>Padding(padding:const EdgeInsets.symmetric(vertical:5),child:Row(crossAxisAlignment:CrossAxisAlignment.start,children:[
+  SizedBox(width:125,child:Text(label,style:const TextStyle(color:green,fontWeight:FontWeight.bold))),
+  Expanded(child:Text(value,style:const TextStyle(height:1.6))),
+ ]));
+}
+
 class Favorites extends StatelessWidget {final Set<String> saved;final Future<void> Function(Book) onToggle;const Favorites({super.key,required this.saved,required this.onToggle});@override Widget build(BuildContext c){final list=catalogBooks.where((b)=>saved.contains(b.title)).toList();return list.isEmpty?const Center(child:Text('لم تضف كتباً إلى مكتبتك بعد.')):ListView(padding:const EdgeInsets.all(12),children:list.map((b)=>BookTile(book:b,saved:true,onSave:()=>onToggle(b))).toList());}}
 class InfoPage extends StatelessWidget {final String title,body;const InfoPage({super.key,required this.title,required this.body});@override Widget build(BuildContext c)=>Directionality(textDirection:TextDirection.rtl,child:Scaffold(appBar:AppBar(title:Text(title)),body:Padding(padding:const EdgeInsets.all(22),child:Text(body,style:const TextStyle(fontSize:17,height:2)))));}
 
