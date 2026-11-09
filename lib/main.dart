@@ -1,371 +1,70 @@
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
-const Color emerald = Color(0xFF123B30);
-const Color gold = Color(0xFFC6A45C);
-const Color ivory = Color(0xFFF4EBDD);
+const green = Color(0xFF123B30), gold = Color(0xFFC6A45C), paper = Color(0xFFF6F0E4);
+const books = <Book>[
+ Book('صحيح البخاري','الإمام محمد بن إسماعيل البخاري','الحديث الشريف','من أمهات كتب الحديث النبوي.'),
+ Book('صحيح مسلم','الإمام مسلم بن الحجاج','الحديث الشريف','مصنف من أشهر دواوين السنة النبوية.'),
+ Book('رياض الصالحين','الإمام يحيى بن شرف النووي','الحديث والآداب','أحاديث في الإيمان والعبادات والأخلاق والآداب.'),
+ Book('الأربعون النووية','الإمام يحيى بن شرف النووي','الحديث الشريف','مجموعة مشهورة من جوامع أحاديث النبي صلى الله عليه وسلم.'),
+ Book('الأدب المفرد','الإمام محمد بن إسماعيل البخاري','الحديث والآداب','مصنف في بر الوالدين وصلة الرحم وحسن الخلق.'),
+ Book('الرسالة','الإمام محمد بن إدريس الشافعي','أصول الفقه','من أوائل المصنفات المستقلة في أصول الفقه.'),
+ Book('تفسير القرآن العظيم','الإمام إسماعيل بن عمر ابن كثير','القرآن وعلومه','تفسير بالمأثور يعتني بالآيات والأحاديث وأقوال السلف.'),
+ Book('العقيدة الواسطية','شيخ الإسلام ابن تيمية','العقيدة والتوحيد','رسالة موجزة في أصول الاعتقاد.'),
+ Book('كتاب التوحيد','الإمام محمد بن عبد الوهاب','العقيدة والتوحيد','كتاب في تقرير توحيد العبادة.'),
+ Book('بلوغ المرام','الحافظ ابن حجر العسقلاني','الفقه والحديث','جمع أحاديث الأحكام مع عزوها إلى مصادرها.'),
+ Book('زاد المعاد','الإمام ابن قيم الجوزية','السيرة والشمائل','مصنف في هدي النبي صلى الله عليه وسلم وسيرته.'),
+ Book('الأذكار','الإمام يحيى بن شرف النووي','الأذكار والرقائق','جمع للأذكار والأدعية الواردة في العبادات وأحوال اليوم.'),
+];
+class Book { final String title,author,category,summary; const Book(this.title,this.author,this.category,this.summary); }
+const categories=['القرآن وعلومه','الحديث الشريف','العقيدة والتوحيد','الفقه والحديث','السيرة والشمائل','أصول الفقه','الحديث والآداب','الأذكار والرقائق','اللغة العربية','التاريخ والتراجم','المسلمون الجدد','قسم الأطفال'];
 
-Future<void> main() async {
-  WidgetsFlutterBinding.ensureInitialized();
-  final prefs = await SharedPreferences.getInstance();
-  final seenIntro = prefs.getBool('seen_intro') ?? false;
-  runApp(NoorAlHudaApp(showIntro: !seenIntro));
-}
-
-class NoorAlHudaApp extends StatelessWidget {
-  final bool showIntro;
-  const NoorAlHudaApp({super.key, required this.showIntro});
-
-  @override
-  Widget build(BuildContext context) {
-    return MaterialApp(
-      debugShowCheckedModeBanner: false,
-      title: 'نور الهدى',
-      theme: ThemeData(
-        useMaterial3: true,
-        scaffoldBackgroundColor: ivory,
-        colorScheme: ColorScheme.fromSeed(
-          seedColor: emerald,
-          primary: emerald,
-          secondary: gold,
-          surface: ivory,
-        ),
-        fontFamily: 'NotoNaskhArabic',
-        appBarTheme: const AppBarTheme(
-          backgroundColor: emerald,
-          foregroundColor: Colors.white,
-          centerTitle: true,
-        ),
-      ),
-      home: showIntro ? const WelcomePage() : const HomePage(),
-    );
-  }
-}
+Future<void> main() async { WidgetsFlutterBinding.ensureInitialized(); final p=await SharedPreferences.getInstance(); runApp(NoorApp(firstRun:!(p.getBool('seen_intro')??false))); }
+class NoorApp extends StatelessWidget { final bool firstRun; const NoorApp({super.key,required this.firstRun}); @override Widget build(BuildContext c)=>MaterialApp(title:'نور الهدى',debugShowCheckedModeBanner:false,theme:ThemeData(useMaterial3:true,scaffoldBackgroundColor:paper,colorScheme:ColorScheme.fromSeed(seedColor:green,primary:green,secondary:gold),appBarTheme:const AppBarTheme(backgroundColor:green,foregroundColor:Colors.white,centerTitle:true)),home:firstRun?const WelcomePage():const HomePage()); }
 
 class WelcomePage extends StatelessWidget {
-  const WelcomePage({super.key});
-
-  Future<void> _continue(BuildContext context) async {
-    final prefs = await SharedPreferences.getInstance();
-    await prefs.setBool('seen_intro', true);
-    if (!context.mounted) return;
-    Navigator.of(context).pushReplacement(
-      MaterialPageRoute(builder: (_) => const HomePage()),
-    );
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    return Directionality(
-      textDirection: TextDirection.rtl,
-      child: Scaffold(
-        body: Container(
-          width: double.infinity,
-          decoration: const BoxDecoration(
-            gradient: LinearGradient(
-              begin: Alignment.topCenter,
-              end: Alignment.bottomCenter,
-              colors: [Color(0xFF174A3B), Color(0xFF0D2D25)],
-            ),
-          ),
-          child: SafeArea(
-            child: Padding(
-              padding: const EdgeInsets.all(24),
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  const Ornament(),
-                  const SizedBox(height: 24),
-                  const Text(
-                    'بِسْمِ اللهِ الرَّحْمَٰنِ الرَّحِيمِ',
-                    style: TextStyle(color: gold, fontSize: 22, fontWeight: FontWeight.bold),
-                    textAlign: TextAlign.center,
-                  ),
-                  const SizedBox(height: 18),
-                  const Text(
-                    'نُورُ الهُدَى',
-                    style: TextStyle(color: Colors.white, fontSize: 38, fontWeight: FontWeight.bold),
-                  ),
-                  const Text(
-                    'الموسوعة الإسلامية العالمية',
-                    style: TextStyle(color: Color(0xFFE9D9B5), fontSize: 17),
-                  ),
-                  const SizedBox(height: 28),
-                  const Divider(color: gold, thickness: 1),
-                  const SizedBox(height: 18),
-                  const Text(
-                    'الحمد لله رب العالمين، حمداً كثيراً طيباً مباركاً فيه، والصلاة والسلام على نبينا محمد، وعلى آله وصحبه أجمعين.',
-                    style: TextStyle(color: ivory, height: 1.9, fontSize: 17),
-                    textAlign: TextAlign.center,
-                  ),
-                  const SizedBox(height: 14),
-                  const Text(
-                    'اللهم اجعل هذا العمل خالصاً لوجهك الكريم، وانفع به المسلمين، واجعله علماً نافعاً وصدقة جارية، وبارك في صاحبه والقائمين عليه.',
-                    style: TextStyle(color: ivory, height: 1.9, fontSize: 17),
-                    textAlign: TextAlign.center,
-                  ),
-                  const SizedBox(height: 20),
-                  const Text(
-                    'اللهم ارزقنا علماً نافعاً وعملاً صالحاً وقلباً خاشعاً.',
-                    style: TextStyle(color: gold, fontWeight: FontWeight.bold, fontSize: 17),
-                    textAlign: TextAlign.center,
-                  ),
-                  const Spacer(),
-                  FilledButton(
-                    style: FilledButton.styleFrom(
-                      backgroundColor: gold,
-                      foregroundColor: emerald,
-                      minimumSize: const Size(double.infinity, 54),
-                      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
-                    ),
-                    onPressed: () => _continue(context),
-                    child: const Text('ابدأ رحلتك في طلب العلم', style: TextStyle(fontSize: 17, fontWeight: FontWeight.bold)),
-                  ),
-                ],
-              ),
-            ),
-          ),
-        ),
-      ),
-    );
-  }
+ const WelcomePage({super.key});
+ Future<void> enter(BuildContext c) async { final p=await SharedPreferences.getInstance(); await p.setBool('seen_intro',true); if(!c.mounted)return; Navigator.pushReplacement(c,MaterialPageRoute(builder:(_)=>const HomePage())); }
+ @override Widget build(BuildContext c)=>Directionality(textDirection:TextDirection.rtl,child:Scaffold(body:Container(width:double.infinity,decoration:const BoxDecoration(gradient:LinearGradient(begin:Alignment.topCenter,end:Alignment.bottomCenter,colors:[Color(0xFF1D5A46),Color(0xFF09271F)])),child:SafeArea(child:Padding(padding:const EdgeInsets.all(25),child:Column(mainAxisAlignment:MainAxisAlignment.center,children:[
+ const Icon(Icons.menu_book_rounded,color:gold,size:78),const SizedBox(height:20),const Text('بِسْمِ اللهِ الرَّحْمَٰنِ الرَّحِيمِ',style:TextStyle(color:gold,fontSize:21,fontWeight:FontWeight.bold)),const SizedBox(height:16),const Text('نُورُ الهُدَى',style:TextStyle(color:Colors.white,fontSize:40,fontWeight:FontWeight.bold)),const Text('الموسوعة الإسلامية',style:TextStyle(color:Color(0xFFE9D9B5),fontSize:18)),const SizedBox(height:28),const Divider(color:gold),const SizedBox(height:18),const Text('الحمد لله رب العالمين، والصلاة والسلام على نبينا محمد وعلى آله وصحبه أجمعين.',textAlign:TextAlign.center,style:TextStyle(color:Colors.white,height:2,fontSize:17)),const SizedBox(height:14),const Text('اللهم اجعل هذا العمل خالصاً لوجهك الكريم، وانفع به المسلمين، واجعله علماً نافعاً وصدقة جارية، وبارك في صاحبه والقائمين عليه.',textAlign:TextAlign.center,style:TextStyle(color:paper,height:2,fontSize:16)),const SizedBox(height:28),FilledButton(onPressed:()=>enter(c),style:FilledButton.styleFrom(backgroundColor:gold,foregroundColor:green,minimumSize:const Size(double.infinity,54)),child:const Text('ابدأ رحلتك في طلب العلم')),
+ ]))))));
 }
 
-class Ornament extends StatelessWidget {
-  const Ornament({super.key});
-
-  @override
-  Widget build(BuildContext context) => Container(
-    width: 82,
-    height: 82,
-    decoration: BoxDecoration(
-      border: Border.all(color: gold, width: 2),
-      borderRadius: BorderRadius.circular(22),
-    ),
-    child: const Icon(Icons.menu_book_rounded, color: gold, size: 44),
-  );
+class HomePage extends StatefulWidget { const HomePage({super.key}); @override State<HomePage> createState()=>_HomeState(); }
+class _HomeState extends State<HomePage> {
+ String query=''; int tab=0; Set<String> saved={};
+ @override void initState(){super.initState();load();}
+ Future<void> load() async {final p=await SharedPreferences.getInstance();if(mounted)setState(()=>saved=(p.getStringList('saved_books')??[]).toSet());}
+ Future<void> toggle(Book b) async {setState((){if(saved.contains(b.title)){saved.remove(b.title);}else{saved.add(b.title);}});final p=await SharedPreferences.getInstance();await p.setStringList('saved_books',saved.toList());}
+ @override Widget build(BuildContext c){
+ final matches=books.where((b)=>(b.title+' '+b.author+' '+b.category).contains(query.trim())).toList();
+ return Directionality(textDirection:TextDirection.rtl,child:Scaffold(appBar:AppBar(title:const Column(children:[Text('نور الهدى',style:TextStyle(fontWeight:FontWeight.bold)),Text('الموسوعة الإسلامية',style:TextStyle(fontSize:11,color:Color(0xFFE8D9B7)))])),
+ drawer:Drawer(child:Column(children:[Container(width:double.infinity,padding:const EdgeInsets.fromLTRB(20,55,20,25),color:green,child:const Column(children:[Icon(Icons.menu_book,color:gold,size:45),Text('نور الهدى',style:TextStyle(color:Colors.white,fontSize:25,fontWeight:FontWeight.bold))])),ListTile(leading:const Icon(Icons.home),title:const Text('الرئيسية'),onTap:(){Navigator.pop(c);setState(()=>tab=0);}),ListTile(leading:const Icon(Icons.bookmark_outline),title:const Text('مكتبتي الخاصة'),onTap:(){Navigator.pop(c);setState(()=>tab=1);}),ListTile(leading:const Icon(Icons.person_outline),title:const Text('المسلمون الجدد'),onTap:(){Navigator.pop(c);setState(()=>tab=2);}),ListTile(leading:const Icon(Icons.child_care),title:const Text('قسم الأطفال'),onTap:(){Navigator.pop(c);setState(()=>tab=3);})])),
+ body:tab==1?Favorites(saved:saved,onToggle:toggle):tab==2?const InfoPage(title:'دليل المسلم الجديد',body:'سيضم هذا القسم دروساً متدرجة في أركان الإسلام والإيمان والطهارة والصلاة وقراءة القرآن، مع مراجعة علمية وترجمة إلى لغات متعددة.'):tab==3?const InfoPage(title:'براعم نور الهدى',body:'قسم تربوي للأطفال لتعليم الوضوء والصلاة والأذكار وقصص الأنبياء. ستستخدم فيه رسومات تعليمية بلا ملامح وجه ظاهرة.'):ListView(padding:const EdgeInsets.all(16),children:[
+ Container(padding:const EdgeInsets.all(18),decoration:BoxDecoration(gradient:const LinearGradient(colors:[green,Color(0xFF1D5A46)]),borderRadius:BorderRadius.circular(22),border:Border.all(color:gold)),child:Column(crossAxisAlignment:CrossAxisAlignment.start,children:[const Text('﴿ وَقُل رَّبِّ زِدْنِي عِلْمًا ﴾',style:TextStyle(color:gold,fontSize:23,fontWeight:FontWeight.bold)),const SizedBox(height:7),const Text('بوابتك إلى مصادر العلم والتراث الإسلامي',style:TextStyle(color:Colors.white)),const SizedBox(height:15),TextField(onChanged:(v)=>setState(()=>query=v),decoration:InputDecoration(hintText:'ابحث عن كتاب أو مؤلف أو قسم...',prefixIcon:const Icon(Icons.search,color:green),filled:true,fillColor:paper,border:OutlineInputBorder(borderRadius:BorderRadius.circular(14),borderSide:BorderSide.none)))])),
+ const SizedBox(height:20),const Heading('أقسام الموسوعة'),const SizedBox(height:10),
+ GridView.builder(shrinkWrap:true,physics:const NeverScrollableScrollPhysics(),itemCount:categories.length,gridDelegate:const SliverGridDelegateWithFixedCrossAxisCount(crossAxisCount:2,mainAxisSpacing:9,crossAxisSpacing:9,childAspectRatio:2.05),itemBuilder:(ctx,i)=>InkWell(onTap:()=>Navigator.push(ctx,MaterialPageRoute(builder:(_)=>CategoryPage(category:categories[i],saved:saved,onToggle:toggle))),child:Container(decoration:BoxDecoration(color:Colors.white,borderRadius:BorderRadius.circular(14),border:Border.all(color:const Color(0xFFDDCBA7))),child:Center(child:Text(categories[i],textAlign:TextAlign.center,style:const TextStyle(color:green,fontWeight:FontWeight.bold)))))),
+ const SizedBox(height:20),Heading(query.isEmpty?'كتب مقترحة للفهرسة':'نتائج البحث'),
+ if(matches.isEmpty)const Padding(padding:EdgeInsets.all(20),child:Text('لا توجد نتائج مطابقة.',textAlign:TextAlign.center))else ...matches.map((b)=>BookTile(book:b,saved:saved.contains(b.title),onSave:()=>toggle(b))),
+ const SizedBox(height:10),const Text('تنبيه: هذه نسخة تأسيسية للفهرس والتصميم. النصوص الكاملة تحتاج إلى إدراج نسخ رقمية موثوقة ومراجعة بياناتها قبل إتاحتها.',style:TextStyle(color:Colors.brown,fontSize:12,height:1.7))
+ ]),
+ bottomNavigationBar:NavigationBar(selectedIndex:tab==1?1:0,onDestinationSelected:(v)=>setState(()=>tab=v),destinations:const[NavigationDestination(icon:Icon(Icons.home_outlined),label:'الرئيسية'),NavigationDestination(icon:Icon(Icons.bookmark_outline),label:'مكتبتي')]),
+ ));
+ }
 }
-
-class HomePage extends StatelessWidget {
-  const HomePage({super.key});
-
-  static const sections = [
-    ('القرآن وعلومه', Icons.auto_stories_rounded),
-    ('الحديث الشريف', Icons.menu_book_rounded),
-    ('العقيدة والتوحيد', Icons.lightbulb_outline_rounded),
-    ('الفقه الإسلامي', Icons.balance_rounded),
-    ('السيرة النبوية', Icons.mosque_rounded),
-    ('التاريخ والتراجم', Icons.history_edu_rounded),
-    ('اللغة العربية', Icons.translate_rounded),
-    ('الرقائق والآداب', Icons.favorite_border_rounded),
-    ('أصول الفقه', Icons.account_tree_outlined),
-    ('مصطلح الحديث', Icons.fact_check_outlined),
-    ('الفتاوى الموثقة', Icons.question_answer_outlined),
-    ('المسلمون الجدد', Icons.public_rounded),
-  ];
-
-  @override
-  Widget build(BuildContext context) {
-    return Directionality(
-      textDirection: TextDirection.rtl,
-      child: Scaffold(
-        appBar: AppBar(
-          title: const Column(
-            children: [
-              Text('نور الهدى', style: TextStyle(fontWeight: FontWeight.bold)),
-              Text('الموسوعة الإسلامية العالمية', style: TextStyle(fontSize: 11, color: Color(0xFFE8D9B7))),
-            ],
-          ),
-          actions: [
-            IconButton(
-              tooltip: 'الإعدادات',
-              onPressed: () => Navigator.push(context, MaterialPageRoute(builder: (_) => const SettingsPage())),
-              icon: const Icon(Icons.settings_outlined),
-            ),
-          ],
-        ),
-        drawer: const AppDrawer(),
-        body: ListView(
-          padding: const EdgeInsets.all(16),
-          children: [
-            Container(
-              padding: const EdgeInsets.all(18),
-              decoration: BoxDecoration(
-                color: emerald,
-                borderRadius: BorderRadius.circular(22),
-                border: Border.all(color: gold, width: 1.2),
-              ),
-              child: const Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text('﴿ وَقُل رَّبِّ زِدْنِي عِلْمًا ﴾',
-                    style: TextStyle(color: gold, fontSize: 22, fontWeight: FontWeight.bold)),
-                  SizedBox(height: 8),
-                  Text('مكتبتك للعلم النافع والتراث الإسلامي',
-                    style: TextStyle(color: Colors.white, fontSize: 14)),
-                  SizedBox(height: 16),
-                  SearchField(),
-                ],
-              ),
-            ),
-            const SizedBox(height: 22),
-            const SectionHeading(title: 'أقسام الموسوعة'),
-            const SizedBox(height: 12),
-            GridView.builder(
-              shrinkWrap: true,
-              physics: const NeverScrollableScrollPhysics(),
-              itemCount: sections.length,
-              gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-                crossAxisCount: 2, mainAxisSpacing: 10, crossAxisSpacing: 10, childAspectRatio: 1.75,
-              ),
-              itemBuilder: (context, index) {
-                final item = sections[index];
-                return InkWell(
-                  borderRadius: BorderRadius.circular(16),
-                  onTap: () => _showComingSoon(context, item.$1),
-                  child: Container(
-                    decoration: BoxDecoration(
-                      color: Colors.white,
-                      borderRadius: BorderRadius.circular(16),
-                      border: Border.all(color: const Color(0xFFDCCBA8)),
-                    ),
-                    padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 12),
-                    child: Column(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        Icon(item.$2, color: emerald, size: 27),
-                        const SizedBox(height: 7),
-                        Text(item.$1, textAlign: TextAlign.center,
-                          style: const TextStyle(color: emerald, fontWeight: FontWeight.bold, fontSize: 13)),
-                      ],
-                    ),
-                  ),
-                );
-              },
-            ),
-            const SizedBox(height: 22),
-            const SectionHeading(title: 'مساحات المكتبة'),
-            const SizedBox(height: 10),
-            FeatureTile(icon: Icons.people_alt_outlined, title: 'العلماء والمؤلفون', subtitle: 'تراجم العلماء ومؤلفاتهم', onTap: () => _showComingSoon(context, 'العلماء والمؤلفون')),
-            FeatureTile(icon: Icons.download_for_offline_outlined, title: 'المكتبة والتنزيلات', subtitle: 'إدارة الكتب المتاحة دون إنترنت', onTap: () => _showComingSoon(context, 'المكتبة والتنزيلات')),
-            FeatureTile(icon: Icons.bookmark_border, title: 'مكتبتي الخاصة', subtitle: 'المفضلة والعلامات وسجل القراءة', onTap: () => _showComingSoon(context, 'مكتبتي الخاصة')),
-          ],
-        ),
-      ),
-    );
-  }
-
-  static void _showComingSoon(BuildContext context, String name) {
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(content: Text('$name: سيتم تفعيل هذا القسم عند ربط قاعدة الكتب الموثوقة.')),
-    );
-  }
+class Heading extends StatelessWidget {final String title;const Heading(this.title,{super.key});@override Widget build(BuildContext c)=>Row(children:[Container(width:4,height:22,color:gold),const SizedBox(width:9),Text(title,style:const TextStyle(color:green,fontSize:18,fontWeight:FontWeight.bold))]);}
+class BookTile extends StatelessWidget {
+ final Book book;final bool saved;final VoidCallback onSave;const BookTile({super.key,required this.book,required this.saved,required this.onSave});
+ @override Widget build(BuildContext c)=>Card(color:Colors.white,elevation:0,margin:const EdgeInsets.symmetric(vertical:5),shape:RoundedRectangleBorder(borderRadius:BorderRadius.circular(14),side:const BorderSide(color:Color(0xFFDDCBA7))),child:ListTile(leading:Container(width:42,height:48,decoration:BoxDecoration(color:green,borderRadius:BorderRadius.circular(8)),child:const Icon(Icons.menu_book,color:gold)),title:Text(book.title,style:const TextStyle(color:green,fontWeight:FontWeight.bold)),subtitle:Text(book.author+'\n'+book.category,maxLines:2,overflow:TextOverflow.ellipsis),trailing:IconButton(onPressed:onSave,icon:Icon(saved?Icons.bookmark:Icons.bookmark_border,color:gold)),onTap:()=>Navigator.push(c,MaterialPageRoute(builder:(_)=>BookDetails(book:book,saved:saved,onSave:onSave)))));
 }
-
-class SearchField extends StatelessWidget {
-  const SearchField({super.key});
-  @override
-  Widget build(BuildContext context) => TextField(
-    textDirection: TextDirection.rtl,
-    decoration: InputDecoration(
-      hintText: 'ابحث عن كتاب أو عالم أو موضوع...',
-      hintStyle: const TextStyle(fontSize: 13, color: Color(0xFF6E776F)),
-      prefixIcon: const Icon(Icons.search, color: emerald),
-      filled: true,
-      fillColor: ivory,
-      contentPadding: const EdgeInsets.symmetric(vertical: 4),
-      border: OutlineInputBorder(borderRadius: BorderRadius.circular(14), borderSide: BorderSide.none),
-    ),
-    onSubmitted: (_) => ScaffoldMessenger.of(context).showSnackBar(
-      const SnackBar(content: Text('سيتم تفعيل البحث الشامل بعد تجهيز فهرس الكتب.')),
-    ),
-  );
+class CategoryPage extends StatelessWidget {
+ final String category;final Set<String> saved;final Future<void> Function(Book) onToggle;const CategoryPage({super.key,required this.category,required this.saved,required this.onToggle});
+ @override Widget build(BuildContext c){final list=books.where((b)=>b.category==category||(category=='الحديث الشريف'&&b.category=='الحديث والآداب')).toList();return Directionality(textDirection:TextDirection.rtl,child:Scaffold(appBar:AppBar(title:Text(category)),body:list.isEmpty?const Center(child:Text('سيضاف فهرس هذا القسم بعد مراجعة مصادره.')):ListView(padding:const EdgeInsets.all(12),children:list.map((b)=>BookTile(book:b,saved:saved.contains(b.title),onSave:()=>onToggle(b))).toList())));}
 }
-
-class SectionHeading extends StatelessWidget {
-  final String title;
-  const SectionHeading({super.key, required this.title});
-  @override
-  Widget build(BuildContext context) => Row(
-    children: [
-      Container(width: 4, height: 22, decoration: BoxDecoration(color: gold, borderRadius: BorderRadius.circular(4))),
-      const SizedBox(width: 9),
-      Text(title, style: const TextStyle(color: emerald, fontWeight: FontWeight.bold, fontSize: 18)),
-    ],
-  );
+class BookDetails extends StatelessWidget {
+ final Book book;final bool saved;final VoidCallback onSave;const BookDetails({super.key,required this.book,required this.saved,required this.onSave});
+ @override Widget build(BuildContext c)=>Directionality(textDirection:TextDirection.rtl,child:Scaffold(appBar:AppBar(title:const Text('بيانات الكتاب')),body:ListView(padding:const EdgeInsets.all(20),children:[Container(height:150,decoration:BoxDecoration(color:green,borderRadius:BorderRadius.circular(18),border:Border.all(color:gold)),child:const Icon(Icons.menu_book,color:gold,size:75)),const SizedBox(height:20),Text(book.title,textAlign:TextAlign.center,style:const TextStyle(color:green,fontSize:25,fontWeight:FontWeight.bold)),const SizedBox(height:8),Text(book.author,textAlign:TextAlign.center),const Divider(height:30),const Heading('نبذة عن الكتاب'),Text(book.summary,style:const TextStyle(fontSize:16,height:1.9)),const SizedBox(height:18),FilledButton.icon(onPressed:onSave,icon:Icon(saved?Icons.bookmark:Icons.bookmark_add_outlined),label:Text(saved?'إزالة من مكتبتي':'أضف إلى مكتبتي')),const SizedBox(height:12),const Text('النص الكامل غير مرفق في هذه النسخة بعد. لن نعرض نصاً منسوباً إلى كتاب قبل توفير نسخة موثوقة والتحقق منها.',textAlign:TextAlign.center,style:TextStyle(color:Colors.brown,height:1.8))])));
+ }
 }
-
-class FeatureTile extends StatelessWidget {
-  final IconData icon;
-  final String title;
-  final String subtitle;
-  final VoidCallback onTap;
-  const FeatureTile({super.key, required this.icon, required this.title, required this.subtitle, required this.onTap});
-  @override
-  Widget build(BuildContext context) => Card(
-    color: Colors.white,
-    elevation: 0,
-    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(14), side: const BorderSide(color: Color(0xFFDCCBA8))),
-    child: ListTile(
-      onTap: onTap,
-      leading: Icon(icon, color: emerald, size: 28),
-      title: Text(title, style: const TextStyle(color: emerald, fontWeight: FontWeight.bold)),
-      subtitle: Text(subtitle, style: const TextStyle(fontSize: 12)),
-      trailing: const Icon(Icons.chevron_left, color: gold),
-    ),
-  );
-}
-
-class AppDrawer extends StatelessWidget {
-  const AppDrawer({super.key});
-  @override
-  Widget build(BuildContext context) => Drawer(
-    child: Directionality(
-      textDirection: TextDirection.rtl,
-      child: Column(
-        children: [
-          Container(
-            width: double.infinity,
-            padding: const EdgeInsets.fromLTRB(20, 55, 20, 25),
-            color: emerald,
-            child: const Column(children: [
-              Icon(Icons.menu_book_rounded, color: gold, size: 44),
-              SizedBox(height: 8),
-              Text('نور الهدى', style: TextStyle(color: Colors.white, fontSize: 24, fontWeight: FontWeight.bold)),
-              Text('الموسوعة الإسلامية العالمية', style: TextStyle(color: ivory, fontSize: 12)),
-            ]),
-          ),
-          ListTile(leading: const Icon(Icons.home_outlined), title: const Text('الرئيسية'), onTap: () => Navigator.pop(context)),
-          ListTile(leading: const Icon(Icons.people_outline), title: const Text('العلماء والمؤلفون'), onTap: () => Navigator.pop(context)),
-          ListTile(leading: const Icon(Icons.download_outlined), title: const Text('التنزيلات'), onTap: () => Navigator.pop(context)),
-          ListTile(leading: const Icon(Icons.language), title: const Text('اللغات'), onTap: () => Navigator.pop(context)),
-          ListTile(leading: const Icon(Icons.settings_outlined), title: const Text('الإعدادات'), onTap: () {
-            Navigator.pop(context);
-            Navigator.push(context, MaterialPageRoute(builder: (_) => const SettingsPage()));
-          }),
-          const Spacer(),
-          const Padding(padding: EdgeInsets.all(16), child: Text('نسخة تأسيسية قيد التطوير', style: TextStyle(color: Colors.grey, fontSize: 11))),
-        ],
-      ),
-    ),
-  );
-}
-
-class SettingsPage extends StatelessWidget {
-  const SettingsPage({super.key});
-  @override
-  Widget build(BuildContext context) => Directionality(
-    textDirection: TextDirection.rtl,
-    child: Scaffold(
-      appBar: AppBar(title: const Text('الإعدادات')),
-      body: ListView(
-        children: const [
-          ListTile(leading: Icon(Icons.language), title: Text('لغة التطبيق'), subtitle: Text('العربية حالياً — ستضاف اللغات الأخرى')),
-          ListTile(leading: Icon(Icons.dark_mode_outlined), title: Text('مظهر القراءة'), subtitle: Text('فاتح / داكن — قيد الإعداد')),
-          ListTile(leading: Icon(Icons.storage_outlined), title: Text('مساحة المكتبة'), subtitle: Text('ستظهر أحجام الكتب بعد ربط مستودع المحتوى')),
-          ListTile(leading: Icon(Icons.info_outline), title: Text('حول الموسوعة'), subtitle: Text('نور الهدى — الموسوعة الإسلامية العالمية')),
-        ],
-      ),
-    ),
-  );
-}
+class Favorites extends StatelessWidget {final Set<String> saved;final Future<void> Function(Book) onToggle;const Favorites({super.key,required this.saved,required this.onToggle});@override Widget build(BuildContext c){final list=books.where((b)=>saved.contains(b.title)).toList();return Directionality(textDirection:TextDirection.rtl,child:Scaffold(appBar:AppBar(title:const Text('مكتبتي الخاصة')),body:list.isEmpty?const Center(child:Text('لم تضف كتباً إلى مكتبتك بعد.')):ListView(padding:const EdgeInsets.all(12),children:list.map((b)=>BookTile(book:b,saved:true,onSave:()=>onToggle(b))).toList())));}}
+class InfoPage extends StatelessWidget {final String title,body;const InfoPage({super.key,required this.title,required this.body});@override Widget build(BuildContext c)=>Directionality(textDirection:TextDirection.rtl,child:Scaffold(appBar:AppBar(title:Text(title)),body:Padding(padding:const EdgeInsets.all(22),child:Text(body,style:const TextStyle(fontSize:17,height:2)))));}
