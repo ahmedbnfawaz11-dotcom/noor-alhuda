@@ -50,4 +50,17 @@ void main() {
     expect(prefs.getString('note_صحيح البخاري'), 'فائدة أراجعها لاحقاً');
   });
 
+  testWidgets('catalog search ignores Arabic diacritics', (tester) async {
+    SharedPreferences.setMockInitialValues({});
+    await tester.pumpWidget(const NoorApp(firstRun: false));
+    await tester.pumpAndSettle();
+    await tester.tap(find.text('دخول الموسوعة'));
+    await tester.pumpAndSettle();
+
+    await tester.enterText(find.byType(TextField).first, 'رِيَاضُ الصَّالِحِينَ');
+    await tester.pumpAndSettle();
+
+    expect(find.text('رياض الصالحين'), findsWidgets);
+  });
+
 }
