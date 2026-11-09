@@ -36,7 +36,7 @@ void main() {
     await tester.pumpAndSettle();
 
     final book = find.text('صحيح البخاري').first;
-    await tester.ensureVisible(book);
+    await tester.scrollUntilVisible(book, 300);
     await tester.tap(book);
     await tester.pumpAndSettle();
 
