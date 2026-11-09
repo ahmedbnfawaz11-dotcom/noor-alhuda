@@ -72,6 +72,15 @@ const books = <Book>[
  Book('مغني اللبيب عن كتب الأعاريب','ابن هشام الأنصاري','علوم اللغة العربية','مرجع نحوي في الحروف والأدوات والتراكيب والإعراب.'), 
  Book('قطر الندى وبل الصدى','ابن هشام الأنصاري','علوم اللغة العربية','متن مختصر في أبواب النحو مع شرح لمسائلها.')
 ];
+
+// إزالة التكرار من الفهرس مع الحفاظ على ترتيب ظهور الكتب.
+final catalogBooks = books.fold<List<Book>>([], (items, book) {
+ if (!items.any((item) => item.title == book.title && item.author == book.author)) {
+  items.add(book);
+ }
+ return items;
+});
+
 class Book { final String title,author,category,summary; const Book(this.title,this.author,this.category,this.summary); }
 const categories=['القرآن وعلومه','الحديث الشريف','العقيدة والتوحيد','الفقه والحديث','السيرة والشمائل','أصول الفقه','الحديث والآداب','الأذكار والرقائق','علوم اللغة العربية','كتب أهل السنة والجماعة','التاريخ والتراجم','المسلمون الجدد','قسم الأطفال'];
 
@@ -113,7 +122,7 @@ class _HomeState extends State<HomePage> {
  Future<void> load() async {final p=await SharedPreferences.getInstance();if(mounted)setState(()=>saved=(p.getStringList('saved_books')??[]).toSet());}
  Future<void> toggle(Book b) async {setState((){if(saved.contains(b.title)){saved.remove(b.title);}else{saved.add(b.title);}});final p=await SharedPreferences.getInstance();await p.setStringList('saved_books',saved.toList());}
  @override Widget build(BuildContext c){
- final matches=books.where((b)=>(b.title+' '+b.author+' '+b.category+' '+b.summary).contains(query.trim())).toList();
+ final matches=catalogBooks.where((b)=>(b.title+' '+b.author+' '+b.category+' '+b.summary).contains(query.trim())).toList();
  return Directionality(textDirection:TextDirection.rtl,child:Scaffold(appBar:AppBar(title:const Column(children:[Text('نور الهدى',style:TextStyle(fontWeight:FontWeight.bold)),Text('الموسوعة الإسلامية',style:TextStyle(fontSize:11,color:Color(0xFFE8D9B7)))])),
  drawer:Drawer(child:Column(children:[Container(width:double.infinity,padding:const EdgeInsets.fromLTRB(20,55,20,25),color:green,child:const Column(children:[Icon(Icons.menu_book,color:gold,size:45),Text('نور الهدى',style:TextStyle(color:Colors.white,fontSize:25,fontWeight:FontWeight.bold))])),ListTile(leading:const Icon(Icons.home),title:const Text('الرئيسية'),onTap:(){Navigator.pop(c);setState(()=>tab=0);}),ListTile(leading:const Icon(Icons.bookmark_outline),title:const Text('مكتبتي الخاصة'),onTap:(){Navigator.pop(c);setState(()=>tab=1);}),ListTile(leading:const Icon(Icons.person_outline),title:const Text('المسلمون الجدد'),onTap:(){Navigator.pop(c);setState(()=>tab=2);}),ListTile(leading:const Icon(Icons.child_care),title:const Text('قسم الأطفال'),onTap:(){Navigator.pop(c);setState(()=>tab=3);}),ListTile(leading:const Icon(Icons.collections_bookmark_outlined),title:const Text('كتب أهل السنة والجماعة'),onTap:(){Navigator.pop(c);Navigator.push(c,MaterialPageRoute(builder:(_)=>SunniBooksPage(saved:saved,onToggle:toggle)));}),ListTile(leading:const Icon(Icons.info_outline),title:const Text('حول الموسوعة ومصادرها'),onTap:(){Navigator.pop(c);Navigator.push(c,MaterialPageRoute(builder:(_)=>const InfoPage(title:'حول نور الهدى',body:'نور الهدى موسوعة إسلامية تهدف إلى تسهيل الوصول إلى فهارس الكتب والمواد العلمية الموثوقة.\n\nلا يُدرج نص كتاب كامل إلا بعد التحقق من مصدر النسخة وبيانات الطبعة والمحقق وحقوق إعادة التوزيع.\n\nقد تظهر بعض الكتب في الفهرس ببيانات تعريفية فقط إلى حين توفير نص رقمي موثوق ومسموح بإتاحته دون اتصال.\n\nنسأل الله أن يجعل هذا العمل خالصاً نافعاً.')));})])),
  body:tab==1?Favorites(saved:saved,onToggle:toggle):tab==2?const NewMuslimPage():tab==3?const ChildrenPage():ListView(padding:const EdgeInsets.all(16),children:[
@@ -140,7 +149,7 @@ class SunniBooksPage extends StatelessWidget {
  @override Widget build(BuildContext c) {
   final grouped=<String,List<Book>>{};
   final seenTitles=<String>{};
-  for(final b in books.where((b)=>b.category=='كتب أهل السنة والجماعة'||b.category!='قسم الأطفال'&&b.category!='المسلمون الجدد')) {
+  for(final b in catalogBooks.where((b)=>b.category=='كتب أهل السنة والجماعة'||b.category!='قسم الأطفال'&&b.category!='المسلمون الجدد')) {
    if(seenTitles.add(b.title)) grouped.putIfAbsent(b.author,()=>[]).add(b);
   }
   const preferredAuthors=['الإمام محمد بن إدريس الشافعي','الإمام محمد بن إسماعيل البخاري','الإمام مالك بن أنس','الإمام أحمد بن حنبل','الإمام ابن قيم الجوزية','شيخ الإسلام ابن تيمية'];
@@ -165,13 +174,13 @@ class SunniBooksPage extends StatelessWidget {
 }
 class CategoryPage extends StatelessWidget {
  final String category;final Set<String> saved;final Future<void> Function(Book) onToggle;const CategoryPage({super.key,required this.category,required this.saved,required this.onToggle});
- @override Widget build(BuildContext c){final list=category=='كتب أهل السنة والجماعة'?books.toList():books.where((b)=>b.category==category||(category=='الحديث الشريف'&&b.category=='الحديث والآداب')).toList();return Directionality(textDirection:TextDirection.rtl,child:Scaffold(appBar:AppBar(title:Text(category)),body:list.isEmpty?const Center(child:Text('سيضاف فهرس هذا القسم بعد مراجعة مصادره.')):ListView(padding:const EdgeInsets.all(12),children:list.map((b)=>BookTile(book:b,saved:saved.contains(b.title),onSave:()=>onToggle(b))).toList())));}
+ @override Widget build(BuildContext c){final list=category=='كتب أهل السنة والجماعة'?books.toList():catalogBooks.where((b)=>b.category==category||(category=='الحديث الشريف'&&b.category=='الحديث والآداب')).toList();return Directionality(textDirection:TextDirection.rtl,child:Scaffold(appBar:AppBar(title:Text(category)),body:list.isEmpty?const Center(child:Text('سيضاف فهرس هذا القسم بعد مراجعة مصادره.')):ListView(padding:const EdgeInsets.all(12),children:list.map((b)=>BookTile(book:b,saved:saved.contains(b.title),onSave:()=>onToggle(b))).toList())));}
 }
 class BookDetails extends StatelessWidget {
  final Book book;final bool saved;final VoidCallback onSave;const BookDetails({super.key,required this.book,required this.saved,required this.onSave});
  @override Widget build(BuildContext c)=>Directionality(textDirection:TextDirection.rtl,child:Scaffold(appBar:AppBar(title:const Text('بيانات الكتاب')),body:ListView(padding:const EdgeInsets.all(20),children:[Container(height:150,decoration:BoxDecoration(color:green,borderRadius:BorderRadius.circular(18),border:Border.all(color:gold)),child:const Icon(Icons.menu_book,color:gold,size:75)),const SizedBox(height:20),Text(book.title,textAlign:TextAlign.center,style:const TextStyle(color:green,fontSize:25,fontWeight:FontWeight.bold)),const SizedBox(height:8),Text(book.author,textAlign:TextAlign.center),const Divider(height:30),const Heading('نبذة عن الكتاب'),Text(book.summary,style:const TextStyle(fontSize:16,height:1.9)),const SizedBox(height:18),FilledButton.icon(onPressed:onSave,icon:Icon(saved?Icons.bookmark:Icons.bookmark_add_outlined),label:Text(saved?'إزالة من مكتبتي':'أضف إلى مكتبتي')),const SizedBox(height:12),const Text('النص الكامل غير مرفق في هذه النسخة بعد. لن نعرض نصاً منسوباً إلى كتاب قبل توفير نسخة موثوقة والتحقق منها.',textAlign:TextAlign.center,style:TextStyle(color:Colors.brown,height:1.8))])));
  }
-class Favorites extends StatelessWidget {final Set<String> saved;final Future<void> Function(Book) onToggle;const Favorites({super.key,required this.saved,required this.onToggle});@override Widget build(BuildContext c){final list=books.where((b)=>saved.contains(b.title)).toList();return list.isEmpty?const Center(child:Text('لم تضف كتباً إلى مكتبتك بعد.')):ListView(padding:const EdgeInsets.all(12),children:list.map((b)=>BookTile(book:b,saved:true,onSave:()=>onToggle(b))).toList());}}
+class Favorites extends StatelessWidget {final Set<String> saved;final Future<void> Function(Book) onToggle;const Favorites({super.key,required this.saved,required this.onToggle});@override Widget build(BuildContext c){final list=catalogBooks.where((b)=>saved.contains(b.title)).toList();return list.isEmpty?const Center(child:Text('لم تضف كتباً إلى مكتبتك بعد.')):ListView(padding:const EdgeInsets.all(12),children:list.map((b)=>BookTile(book:b,saved:true,onSave:()=>onToggle(b))).toList());}}
 class InfoPage extends StatelessWidget {final String title,body;const InfoPage({super.key,required this.title,required this.body});@override Widget build(BuildContext c)=>Directionality(textDirection:TextDirection.rtl,child:Scaffold(appBar:AppBar(title:Text(title)),body:Padding(padding:const EdgeInsets.all(22),child:Text(body,style:const TextStyle(fontSize:17,height:2)))));}
 
 class NewMuslimPage extends StatelessWidget {
