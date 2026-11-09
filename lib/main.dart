@@ -44,6 +44,23 @@ const books = <Book>[
  Book('البداية والنهاية','الإمام إسماعيل بن عمر ابن كثير','التاريخ والتراجم','مصنف تاريخي يتناول أخبار الأمم والسيرة والتاريخ الإسلامي.'),
  Book('نخبة الفكر','الحافظ ابن حجر العسقلاني','الحديث والآداب','متن مختصر في مصطلح الحديث وأقسامه.'),
  Book('تيسير مصطلح الحديث','الدكتور محمود الطحان','الحديث والآداب','مدخل تعليمي معاصر إلى مباحث مصطلح الحديث.'),
+ Book('الأم','الإمام محمد بن إدريس الشافعي','كتب أهل السنة والجماعة','من أوسع كتب الإمام الشافعي في الفقه والاستدلال.'), 
+ Book('اختلاف الحديث','الإمام محمد بن إدريس الشافعي','كتب أهل السنة والجماعة','كتاب في بيان وجوه الجمع بين الأحاديث التي يظهر تعارضها.'), 
+ Book('خلق أفعال العباد','الإمام محمد بن إسماعيل البخاري','كتب أهل السنة والجماعة','مصنف في مسائل الإيمان والرد على أقوال في خلق أفعال العباد.'), 
+ Book('الأدب المفرد','الإمام محمد بن إسماعيل البخاري','كتب أهل السنة والجماعة','مصنف في الآداب والأخلاق وبر الوالدين وصلة الرحم.'), 
+ Book('الزهد','الإمام أحمد بن حنبل','كتب أهل السنة والجماعة','روايات وآثار في الزهد والرقائق.'), 
+ Book('فضائل الصحابة','الإمام أحمد بن حنبل','كتب أهل السنة والجماعة','روايات في فضائل أصحاب النبي صلى الله عليه وسلم.'), 
+ Book('العلل ومعرفة الرجال','الإمام أحمد بن حنبل','كتب أهل السنة والجماعة','مسائل وروايات تتعلق بعلل الحديث ومعرفة الرجال.'), 
+ Book('المدونة الكبرى','رواية سحنون عن ابن القاسم عن الإمام مالك','كتب أهل السنة والجماعة','من أشهر كتب الفقه المالكي، وهي رواية عن ابن القاسم عن مالك.'), 
+ Book('إعلام الموقعين عن رب العالمين','الإمام ابن قيم الجوزية','كتب أهل السنة والجماعة','مصنف في أصول الفتوى والاجتهاد ومقاصد الشريعة.'), 
+ Book('بدائع الفوائد','الإمام ابن قيم الجوزية','كتب أهل السنة والجماعة','فوائد علمية ولغوية وفقهية وتربوية متنوعة.'), 
+ Book('تحفة المودود بأحكام المولود','الإمام ابن قيم الجوزية','كتب أهل السنة والجماعة','كتاب في أحكام المولود وآداب تربيته.'), 
+ Book('اقتضاء الصراط المستقيم','شيخ الإسلام ابن تيمية','كتب أهل السنة والجماعة','بحث في مخالفة أهل الكتاب وما يتصل بها من مسائل.'), 
+ Book('مجموع الفتاوى','شيخ الإسلام ابن تيمية','كتب أهل السنة والجماعة','مجموعة فتاوى ورسائل ومسائل علمية في أبواب متعددة.'), 
+ Book('جامع العلوم والحكم','الإمام ابن رجب الحنبلي','كتب أهل السنة والجماعة','شرح لأحاديث جامعة في أصول الدين والآداب والأحكام.'), 
+ Book('لطائف المعارف','الإمام ابن رجب الحنبلي','كتب أهل السنة والجماعة','كتاب في مواسم الطاعات والرقائق والآداب.'), 
+ Book('التمهيد لما في الموطأ من المعاني والأسانيد','الإمام ابن عبد البر','كتب أهل السنة والجماعة','شرح حديثي وفقهي موسع لأحاديث موطأ الإمام مالك.'), 
+ Book('الاستذكار','الإمام ابن عبد البر','كتب أهل السنة والجماعة','شرح فقهي وحديثي لمسائل موطأ الإمام مالك.')
  Book('النحو الواضح','علي الجارم ومصطفى أمين','علوم اللغة العربية','كتاب تعليمي في قواعد النحو العربي مع أمثلة وتدريبات.'), 
  Book('شرح ابن عقيل على ألفية ابن مالك','بهاء الدين ابن عقيل','علوم اللغة العربية','شرح تراثي مشهور لأبواب النحو ومسائل الإعراب.'), 
  Book('شذا العرف في فن الصرف','أحمد الحملاوي','علوم اللغة العربية','مدخل مرتب إلى علم الصرف وأوزان الكلمات والاشتقاق.'), 
@@ -98,7 +115,7 @@ class _HomeState extends State<HomePage> {
  @override Widget build(BuildContext c){
  final matches=books.where((b)=>(b.title+' '+b.author+' '+b.category+' '+b.summary).contains(query.trim())).toList();
  return Directionality(textDirection:TextDirection.rtl,child:Scaffold(appBar:AppBar(title:const Column(children:[Text('نور الهدى',style:TextStyle(fontWeight:FontWeight.bold)),Text('الموسوعة الإسلامية',style:TextStyle(fontSize:11,color:Color(0xFFE8D9B7)))])),
- drawer:Drawer(child:Column(children:[Container(width:double.infinity,padding:const EdgeInsets.fromLTRB(20,55,20,25),color:green,child:const Column(children:[Icon(Icons.menu_book,color:gold,size:45),Text('نور الهدى',style:TextStyle(color:Colors.white,fontSize:25,fontWeight:FontWeight.bold))])),ListTile(leading:const Icon(Icons.home),title:const Text('الرئيسية'),onTap:(){Navigator.pop(c);setState(()=>tab=0);}),ListTile(leading:const Icon(Icons.bookmark_outline),title:const Text('مكتبتي الخاصة'),onTap:(){Navigator.pop(c);setState(()=>tab=1);}),ListTile(leading:const Icon(Icons.person_outline),title:const Text('المسلمون الجدد'),onTap:(){Navigator.pop(c);setState(()=>tab=2);}),ListTile(leading:const Icon(Icons.child_care),title:const Text('قسم الأطفال'),onTap:(){Navigator.pop(c);setState(()=>tab=3);}),ListTile(leading:const Icon(Icons.collections_bookmark_outlined),title:const Text('كتب أهل السنة والجماعة'),onTap:(){Navigator.pop(c);Navigator.push(c,MaterialPageRoute(builder:(_)=>CategoryPage(category:'كتب أهل السنة والجماعة',saved:saved,onToggle:toggle)));})])),
+ drawer:Drawer(child:Column(children:[Container(width:double.infinity,padding:const EdgeInsets.fromLTRB(20,55,20,25),color:green,child:const Column(children:[Icon(Icons.menu_book,color:gold,size:45),Text('نور الهدى',style:TextStyle(color:Colors.white,fontSize:25,fontWeight:FontWeight.bold))])),ListTile(leading:const Icon(Icons.home),title:const Text('الرئيسية'),onTap:(){Navigator.pop(c);setState(()=>tab=0);}),ListTile(leading:const Icon(Icons.bookmark_outline),title:const Text('مكتبتي الخاصة'),onTap:(){Navigator.pop(c);setState(()=>tab=1);}),ListTile(leading:const Icon(Icons.person_outline),title:const Text('المسلمون الجدد'),onTap:(){Navigator.pop(c);setState(()=>tab=2);}),ListTile(leading:const Icon(Icons.child_care),title:const Text('قسم الأطفال'),onTap:(){Navigator.pop(c);setState(()=>tab=3);}),ListTile(leading:const Icon(Icons.collections_bookmark_outlined),title:const Text('كتب أهل السنة والجماعة'),onTap:(){Navigator.pop(c);Navigator.push(c,MaterialPageRoute(builder:(_)=>SunniBooksPage(saved:saved,onToggle:toggle)));})])),
  body:tab==1?Favorites(saved:saved,onToggle:toggle):tab==2?const NewMuslimPage():tab==3?const ChildrenPage():ListView(padding:const EdgeInsets.all(16),children:[
  Container(padding:const EdgeInsets.all(18),decoration:BoxDecoration(gradient:const LinearGradient(colors:[green,Color(0xFF1D5A46)]),borderRadius:BorderRadius.circular(22),border:Border.all(color:gold)),child:Column(crossAxisAlignment:CrossAxisAlignment.start,children:[const Text('﴿ وَقُل رَّبِّ زِدْنِي عِلْمًا ﴾',style:TextStyle(color:gold,fontSize:23,fontWeight:FontWeight.bold)),const SizedBox(height:7),const Text('بوابتك إلى مصادر العلم والتراث الإسلامي',style:TextStyle(color:Colors.white)),const SizedBox(height:15),TextField(onChanged:(v)=>setState(()=>query=v),decoration:InputDecoration(hintText:'ابحث عن كتاب أو مؤلف أو قسم...',prefixIcon:const Icon(Icons.search,color:green),filled:true,fillColor:paper,border:OutlineInputBorder(borderRadius:BorderRadius.circular(14),borderSide:BorderSide.none)))])),
  const SizedBox(height:20),const Heading('أقسام الموسوعة'),const SizedBox(height:10),
@@ -115,6 +132,28 @@ class Heading extends StatelessWidget {final String title;const Heading(this.tit
 class BookTile extends StatelessWidget {
  final Book book;final bool saved;final VoidCallback onSave;const BookTile({super.key,required this.book,required this.saved,required this.onSave});
  @override Widget build(BuildContext c)=>Card(color:Colors.white,elevation:0,margin:const EdgeInsets.symmetric(vertical:5),shape:RoundedRectangleBorder(borderRadius:BorderRadius.circular(14),side:const BorderSide(color:Color(0xFFDDCBA7))),child:ListTile(leading:Container(width:42,height:48,decoration:BoxDecoration(color:green,borderRadius:BorderRadius.circular(8)),child:const Icon(Icons.menu_book,color:gold)),title:Text(book.title,style:const TextStyle(color:green,fontWeight:FontWeight.bold)),subtitle:Text(book.author+'\n'+book.category,maxLines:2,overflow:TextOverflow.ellipsis),trailing:IconButton(onPressed:onSave,icon:Icon(saved?Icons.bookmark:Icons.bookmark_border,color:gold)),onTap:()=>Navigator.push(c,MaterialPageRoute(builder:(_)=>BookDetails(book:book,saved:saved,onSave:onSave)))));
+}
+class SunniBooksPage extends StatelessWidget {
+ final Set<String> saved;
+ final Future<void> Function(Book) onToggle;
+ const SunniBooksPage({super.key,required this.saved,required this.onToggle});
+ @override Widget build(BuildContext c) {
+  final grouped=<String,List<Book>>{};
+  for(final b in books.where((b)=>b.category=='كتب أهل السنة والجماعة'||b.category!='قسم الأطفال'&&b.category!='المسلمون الجدد')) {
+   grouped.putIfAbsent(b.author,()=>[]).add(b);
+  }
+  final authors=grouped.keys.toList()..sort();
+  return Directionality(textDirection:TextDirection.rtl,child:Scaffold(
+   appBar:AppBar(title:const Text('كتب أهل السنة والجماعة')),
+   body:ListView(padding:const EdgeInsets.all(12),children:[
+    Container(padding:const EdgeInsets.all(16),decoration:BoxDecoration(color:green,borderRadius:BorderRadius.circular(16),border:Border.all(color:gold)),child:const Text('اختر اسم العالم لتظهر مؤلفاته وكتبه تحته',textAlign:TextAlign.center,style:TextStyle(color:Colors.white,fontSize:16,fontWeight:FontWeight.bold))),
+    const SizedBox(height:12),
+    ...authors.map((author)=>Card(color:Colors.white,elevation:0,shape:RoundedRectangleBorder(borderRadius:BorderRadius.circular(14),side:const BorderSide(color:Color(0xFFDDCBA7))),child:ExpansionTile(leading:const Icon(Icons.account_balance,color:gold),title:Text(author,style:const TextStyle(color:green,fontWeight:FontWeight.bold)),children:grouped[author]!.map((b)=>BookTile(book:b,saved:saved.contains(b.title),onSave:()=>onToggle(b))).toList()))),
+    const SizedBox(height:12),
+    const Text('تنبيه: ترتيب الكتب بحسب المؤلف أو الراوي كما هو مثبت في بيانات الفهرس، وبعض المصنفات روايات أو جمعٌ عن العالم وليست كلها تأليفًا مباشرًا له.',style:TextStyle(color:Colors.brown,fontSize:12,height:1.8)),
+   ]),
+  ));
+ }
 }
 class CategoryPage extends StatelessWidget {
  final String category;final Set<String> saved;final Future<void> Function(Book) onToggle;const CategoryPage({super.key,required this.category,required this.saved,required this.onToggle});
