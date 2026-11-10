@@ -246,7 +246,7 @@ class SunniBooksPage extends StatelessWidget {
    body:ListView(padding:const EdgeInsets.all(12),children:[
     Container(padding:const EdgeInsets.all(16),decoration:BoxDecoration(color:green,borderRadius:BorderRadius.circular(16),border:Border.all(color:gold)),child:const Text('اختر اسم العالم لتظهر مؤلفاته وكتبه تحته',textAlign:TextAlign.center,style:TextStyle(color:Colors.white,fontSize:16,fontWeight:FontWeight.bold))),
     const SizedBox(height:12),
-    ...authors.map((author)=>Card(color:Colors.white,elevation:0,shape:RoundedRectangleBorder(borderRadius:BorderRadius.circular(14),side:const BorderSide(color:Color(0xFFDDCBA7))),child:ExpansionTile(leading:const Icon(Icons.account_balance,color:gold),title:Text(author,style:const TextStyle(color:green,fontWeight:FontWeight.bold)),children:grouped[author]!.map((b)=>BookTile(book:b,saved:saved.contains(b.title),onSave:()=>onToggle(b))).toList()))),
+    ...authors.map((author)=>Card(color:Colors.white,elevation:0,shape:RoundedRectangleBorder(borderRadius:BorderRadius.circular(14),side:const BorderSide(color:Color(0xFFDDCBA7))),child:ExpansionTile(leading:const Icon(Icons.account_balance,color:gold),title:Text(author,style:const TextStyle(color:green,fontWeight:FontWeight.bold)),children:grouped[author]!.map((b)=>BookTile(book:b,saved:saved.contains(b.key),onSave:()=>onToggle(b))).toList()))),
     const SizedBox(height:12),
     const Text('تنبيه: ترتيب الكتب بحسب المؤلف أو الراوي كما هو مثبت في بيانات الفهرس، وبعض المصنفات روايات أو جمعٌ عن العالم وليست كلها تأليفًا مباشرًا له.',style:TextStyle(color:Colors.brown,fontSize:12,height:1.8)),
    ]),
@@ -255,7 +255,7 @@ class SunniBooksPage extends StatelessWidget {
 }
 class CategoryPage extends StatelessWidget {
  final String category;final Set<String> saved;final Future<void> Function(Book) onToggle;const CategoryPage({super.key,required this.category,required this.saved,required this.onToggle});
- @override Widget build(BuildContext c){final list=category=='كتب أهل السنة والجماعة'?catalogBooks.toList():catalogBooks.where((b)=>b.category==category||(category=='الحديث الشريف'&&b.category=='الحديث والآداب')).toList();return Directionality(textDirection:TextDirection.rtl,child:Scaffold(appBar:AppBar(title:Text(category)),body:list.isEmpty?const Center(child:Text('سيضاف فهرس هذا القسم بعد مراجعة مصادره.')):ListView(padding:const EdgeInsets.all(12),children:list.map((b)=>BookTile(book:b,saved:saved.contains(b.title),onSave:()=>onToggle(b))).toList())));}
+ @override Widget build(BuildContext c){final list=category=='كتب أهل السنة والجماعة'?catalogBooks.toList():catalogBooks.where((b)=>b.category==category||(category=='الحديث الشريف'&&b.category=='الحديث والآداب')).toList();return Directionality(textDirection:TextDirection.rtl,child:Scaffold(appBar:AppBar(title:Text(category)),body:list.isEmpty?const Center(child:Text('سيضاف فهرس هذا القسم بعد مراجعة مصادره.')):ListView(padding:const EdgeInsets.all(12),children:list.map((b)=>BookTile(book:b,saved:saved.contains(b.key),onSave:()=>onToggle(b))).toList())));}
 }
 class BookDetails extends StatefulWidget {
  final Book book;
@@ -322,7 +322,7 @@ class _BookDetailsState extends State<BookDetails> {
        final data=jsonDecode(snapshot.data!);
        final bookData=data['books'][widget.book.title] as Map<String,dynamic>;
        final chapters=bookData['chapters'] as List;
-       final text=chapters.map((chapter)=>'${chapter['title']??''}\\n\\n${chapter['text'] as String}').join('\\n\\n');
+       final text=chapters.map((chapter)=>'${chapter['title']??''}\n\n${chapter['text'] as String}').join('\n\n');
        return Column(crossAxisAlignment:CrossAxisAlignment.stretch,children:[
         if(bookData['source']!=null) Text('المصدر: ${bookData['source']}',style:const TextStyle(color:Colors.brown,fontSize:12,height:1.8)),
         if(bookData['edition']!=null) Text('النسخة: ${bookData['edition']}',style:const TextStyle(color:Colors.brown,fontSize:12,height:1.8)),
@@ -393,7 +393,7 @@ class _BookMetaRow extends StatelessWidget {
  ]));
 }
 
-class Favorites extends StatelessWidget {final Set<String> saved;final Future<void> Function(Book) onToggle;const Favorites({super.key,required this.saved,required this.onToggle});@override Widget build(BuildContext c){final list=catalogBooks.where((b)=>saved.contains(b.title)).toList();return list.isEmpty?const Center(child:Text('لم تضف كتباً إلى مكتبتك بعد.')):ListView(padding:const EdgeInsets.all(12),children:list.map((b)=>BookTile(book:b,saved:true,onSave:()=>onToggle(b))).toList());}}
+class Favorites extends StatelessWidget {final Set<String> saved;final Future<void> Function(Book) onToggle;const Favorites({super.key,required this.saved,required this.onToggle});@override Widget build(BuildContext c){final list=catalogBooks.where((b)=>saved.contains(b.key)).toList();return list.isEmpty?const Center(child:Text('لم تضف كتباً إلى مكتبتك بعد.')):ListView(padding:const EdgeInsets.all(12),children:list.map((b)=>BookTile(book:b,saved:true,onSave:()=>onToggle(b))).toList());}}
 class InfoPage extends StatelessWidget {final String title,body;const InfoPage({super.key,required this.title,required this.body});@override Widget build(BuildContext c)=>Directionality(textDirection:TextDirection.rtl,child:Scaffold(appBar:AppBar(title:Text(title)),body:Padding(padding:const EdgeInsets.all(22),child:Text(body,style:const TextStyle(fontSize:17,height:2)))));}
 
 class NewMuslimPage extends StatelessWidget {
