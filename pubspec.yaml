@@ -32,6 +32,12 @@ flutter:
     - assets/books/sahih_muslim_04.json
     - assets/books/sahih_muslim_05.json
     - assets/books/sahih_muslim_06.json
+    - assets/books/sunan_abudawud_01.json
+    - assets/books/sunan_abudawud_02.json
+    - assets/books/sunan_abudawud_03.json
+    - assets/books/sunan_abudawud_04.json
+    - assets/books/sunan_abudawud_05.json
+    - assets/books/sunan_abudawud_06.json
     - assets/books/sunan_abi_dawud_01.json
     - assets/books/sunan_abi_dawud_02.json
     - assets/books/sunan_abi_dawud_03.json
