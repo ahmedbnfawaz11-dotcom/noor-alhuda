@@ -162,7 +162,7 @@ String normalizeArabic(String value) => value
  .replaceAll('آ','ا')
  .replaceAll('ى','ي');
 
-class Book { final String title,author,category,summary; final String? pdfAsset; final String? pdfFilePath; final String? contentAsset; const Book(this.title,this.author,this.category,this.summary,{this.pdfAsset,this.pdfFilePath,this.contentAsset}); }
+class Book { final String title,author,category,summary; final String? pdfAsset; final String? pdfFilePath; final String? contentAsset; const Book(this.title,this.author,this.category,this.summary,{this.pdfAsset,this.pdfFilePath,this.contentAsset}); String get key => '$title::$author'; }
 const categories=['القرآن وعلومه','الحديث الشريف','العقيدة والتوحيد','الفقه والحديث','السيرة والشمائل','أصول الفقه','الحديث والآداب','الأذكار والرقائق','علوم اللغة العربية','كتب أهل السنة والجماعة','التاريخ والتراجم','المسلمون الجدد','قسم الأطفال'];
 
 Future<void> main() async { WidgetsFlutterBinding.ensureInitialized(); final p=await SharedPreferences.getInstance(); runApp(NoorApp(firstRun:!(p.getBool('seen_intro')??false))); }
@@ -200,8 +200,8 @@ class HomePage extends StatefulWidget { const HomePage({super.key}); @override S
 class _HomeState extends State<HomePage> {
  String query=''; int tab=0; Set<String> saved={};
  @override void initState(){super.initState();load();}
- Future<void> load() async {final p=await SharedPreferences.getInstance();if(mounted)setState(()=>saved=(p.getStringList('saved_books')??[]).toSet());}
- Future<void> toggle(Book b) async {setState((){if(saved.contains(b.title)){saved.remove(b.title);}else{saved.add(b.title);}});final p=await SharedPreferences.getInstance();await p.setStringList('saved_books',saved.toList());}
+ Future<void> load() async {final p=await SharedPreferences.getInstance();final stored=p.getStringList('saved_books')??[];final migrated=<String>{};for(final b in catalogBooks){if(stored.contains(b.key)||stored.contains(b.title))migrated.add(b.key);}if(mounted)setState(()=>saved=migrated);if(migrated.length!=stored.length)await p.setStringList('saved_books',migrated.toList());}
+ Future<void> toggle(Book b) async {setState((){if(saved.contains(b.key)){saved.remove(b.key);}else{saved.add(b.key);}});final p=await SharedPreferences.getInstance();await p.setStringList('saved_books',saved.toList());}
  @override Widget build(BuildContext c){
  final normalizedQuery=normalizeArabic(query.trim()); final matches=catalogBooks.where((b)=>normalizeArabic(b.title+' '+b.author+' '+b.category+' '+b.summary).contains(normalizedQuery)).toList();
  return Directionality(textDirection:TextDirection.rtl,child:Scaffold(appBar:AppBar(title:const Column(children:[Text('نور الهدى',style:TextStyle(fontWeight:FontWeight.bold)),Text('الموسوعة الإسلامية',style:TextStyle(fontSize:11,color:Color(0xFFE8D9B7)))])),
@@ -211,7 +211,7 @@ class _HomeState extends State<HomePage> {
  const SizedBox(height:20),const Heading('أقسام الموسوعة'),const SizedBox(height:10),
  GridView.builder(shrinkWrap:true,physics:const NeverScrollableScrollPhysics(),itemCount:categories.length,gridDelegate:const SliverGridDelegateWithFixedCrossAxisCount(crossAxisCount:2,mainAxisSpacing:9,crossAxisSpacing:9,childAspectRatio:2.05),itemBuilder:(ctx,i)=>InkWell(onTap:()=>Navigator.push(ctx,MaterialPageRoute(builder:(_)=>CategoryPage(category:categories[i],saved:saved,onToggle:toggle))),child:Container(decoration:BoxDecoration(color:Colors.white,borderRadius:BorderRadius.circular(14),border:Border.all(color:const Color(0xFFDDCBA7))),child:Center(child:Text(categories[i],textAlign:TextAlign.center,style:const TextStyle(color:green,fontWeight:FontWeight.bold)))))),
  const SizedBox(height:20),Heading(query.isEmpty?'كتب مقترحة للفهرسة':'نتائج البحث'),
- if(matches.isEmpty)const Padding(padding:EdgeInsets.all(20),child:Text('لا توجد نتائج مطابقة.',textAlign:TextAlign.center))else ...matches.map((b)=>BookTile(book:b,saved:saved.contains(b.title),onSave:()=>toggle(b))),
+ if(matches.isEmpty)const Padding(padding:EdgeInsets.all(20),child:Text('لا توجد نتائج مطابقة.',textAlign:TextAlign.center))else ...matches.map((b)=>BookTile(book:b,saved:saved.contains(b.key),onSave:()=>toggle(b))),
  const SizedBox(height:10),const Text('تنبيه: هذه نسخة تأسيسية للفهرس والتصميم. النصوص الكاملة تحتاج إلى إدراج نسخ رقمية موثوقة ومراجعة بياناتها قبل إتاحتها.',style:TextStyle(color:Colors.brown,fontSize:12,height:1.7))
  ]),
  bottomNavigationBar:NavigationBar(selectedIndex:tab==1?1:0,onDestinationSelected:(v)=>setState(()=>tab=v),destinations:const[NavigationDestination(icon:Icon(Icons.home_outlined),label:'الرئيسية'),NavigationDestination(icon:Icon(Icons.bookmark_outline),label:'مكتبتي')]),
@@ -229,9 +229,9 @@ class SunniBooksPage extends StatelessWidget {
  const SunniBooksPage({super.key,required this.saved,required this.onToggle});
  @override Widget build(BuildContext c) {
   final grouped=<String,List<Book>>{};
-  final seenTitles=<String>{};
+  final seenBooks=<String>{};
   for(final b in catalogBooks.where((b)=>b.category=='كتب أهل السنة والجماعة'||b.category!='قسم الأطفال'&&b.category!='المسلمون الجدد')) {
-   if(seenTitles.add(b.title)) grouped.putIfAbsent(b.author,()=>[]).add(b);
+   if(seenBooks.add(b.key)) grouped.putIfAbsent(b.author,()=>[]).add(b);
   }
   const preferredAuthors=['الإمام محمد بن إدريس الشافعي','الإمام محمد بن إسماعيل البخاري','الإمام مالك بن أنس','الإمام أحمد بن حنبل','الإمام ابن قيم الجوزية','شيخ الإسلام ابن تيمية'];
   final authors=grouped.keys.toList()..sort((a,b){
@@ -273,7 +273,7 @@ class _BookDetailsState extends State<BookDetails> {
  @override void initState(){super.initState();loadNote();}
  Future<void> loadNote() async {
   final p=await SharedPreferences.getInstance();
-  final value=p.getString('note_${widget.book.title}')??'';
+  final value=p.getString('note_${widget.book.key}')??'';
   if(!mounted)return;
   noteController.text=value;
   setState(()=>noteLoaded=true);
@@ -281,7 +281,7 @@ class _BookDetailsState extends State<BookDetails> {
  Future<void> saveNote() async {
   setState(()=>noteSaving=true);
   final p=await SharedPreferences.getInstance();
-  await p.setString('note_${widget.book.title}',noteController.text);
+  await p.setString('note_${widget.book.key}',noteController.text);
   if(!mounted)return;
   setState(()=>noteSaving=false);
   ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content:Text('حُفظت ملاحظتك على هذا الجهاز.')));
@@ -322,8 +322,14 @@ class _BookDetailsState extends State<BookDetails> {
        final data=jsonDecode(snapshot.data!);
        final bookData=data['books'][widget.book.title] as Map<String,dynamic>;
        final chapters=bookData['chapters'] as List;
-       final text=chapters.map((chapter)=>chapter['text'] as String).join('\\n\\n');
-       return SelectableText(text,style:TextStyle(fontSize:fontSize,height:2.0,color:Colors.black87));
+       final text=chapters.map((chapter)=>'${chapter['title']??''}\\n\\n${chapter['text'] as String}').join('\\n\\n');
+       return Column(crossAxisAlignment:CrossAxisAlignment.stretch,children:[
+        if(data['source']!=null) Text('المصدر: ${data['source']}',style:const TextStyle(color:Colors.brown,fontSize:12,height:1.8)),
+        if(data['edition']!=null) Text('النسخة: ${data['edition']}',style:const TextStyle(color:Colors.brown,fontSize:12,height:1.8)),
+        if(data['license']!=null) Text('الإتاحة والترخيص: ${data['license']}',style:const TextStyle(color:Colors.brown,fontSize:12,height:1.8)),
+        const SizedBox(height:10),
+        SelectableText(text,style:TextStyle(fontSize:fontSize,height:2.0,color:Colors.black87)),
+       ]);
       } catch (_) {
        return const Text('صيغة ملف الكتاب غير صالحة للعرض.');
       }
@@ -350,7 +356,7 @@ class _BookDetailsState extends State<BookDetails> {
    const SizedBox(height:8),
    FilledButton.tonalIcon(onPressed:!noteLoaded||noteSaving?null:saveNote,icon:const Icon(Icons.save_outlined),label:Text(noteSaving?'جارٍ الحفظ...':'احفظ ملاحظاتي على الجهاز')),
    const SizedBox(height:18),
-   Container(padding:const EdgeInsets.all(14),decoration:BoxDecoration(color:const Color(0xFFFFF4DD),borderRadius:BorderRadius.circular(12),border:Border.all(color:gold)),child:const Text('تنبيه علمي: هذه الصفحة تعرض بيانات الفهرس والنبذة فقط. النص الكامل للكتاب غير مرفق في هذه النسخة. لن ننسب نصوصاً إلى مؤلفيها قبل التحقق من النسخة والطبعة والمصدر وحقوق الإتاحة.',style:TextStyle(color:Colors.brown,height:1.9))),
+   if(widget.book.contentAsset==null&&widget.book.pdfAsset==null&&widget.book.pdfFilePath==null) Container(padding:const EdgeInsets.all(14),decoration:BoxDecoration(color:const Color(0xFFFFF4DD),borderRadius:BorderRadius.circular(12),border:Border.all(color:gold)),child:const Text('هذا الكتاب مدرج في الفهرس ببياناته التعريفية فقط؛ لم يُرفق نصه الكامل بعد. لن نعرض مقتطفاً على أنه كتاب كامل، ولن نضيف نصاً قبل التحقق من مصدره وحقوق إتاحته.',style:TextStyle(color:Colors.brown,height:1.9))),
    ])),
   ));
 }
