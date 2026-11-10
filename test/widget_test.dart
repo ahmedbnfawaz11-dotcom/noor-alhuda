@@ -49,6 +49,15 @@ void main() {
     expect(prefs.getString('note_${books.first.title}'), 'فائدة أراجعها لاحقاً');
   });
 
+  testWidgets('offline reader clearly reports when verified book text is absent', (tester) async {
+    await tester.pumpWidget(MaterialApp(home: OfflineReaderPage(book: books.first)));
+    await tester.pumpAndSettle();
+
+    expect(find.text('قارئ الكتب'), findsOneWidget);
+    expect(find.text('النص الكامل لهذا الكتاب غير متاح داخل النسخة الحالية'), findsOneWidget);
+    expect(find.textContaining('لم نضع نصاً تجريبياً'), findsOneWidget);
+  });
+
   test('Arabic catalog search normalization ignores diacritics', () {
     expect(
       normalizeArabic('رِيَاضُ الصَّالِحِينَ'),
