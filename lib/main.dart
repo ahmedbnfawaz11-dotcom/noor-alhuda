@@ -30,7 +30,7 @@ const books = <Book>[
  Book('لمعة الاعتقاد','الإمام موفق الدين ابن قدامة','العقيدة والتوحيد','رسالة مختصرة في أصول اعتقاد أهل السنة.'),
  Book('العقيدة الطحاوية','الإمام أبو جعفر الطحاوي','العقيدة والتوحيد','متن مشهور في تقرير جملة من مسائل الاعتقاد.'),
  Book('شرح العقيدة الطحاوية','ابن أبي العز الحنفي','العقيدة والتوحيد','شرح موسع لمتن العقيدة الطحاوية.'),
- Book('ثلاثة الأصول','الشيخ محمد بن عبد الوهاب','العقيدة والتوحيد','رسالة تعليمية في معرفة العبد ربه ودينه ونبيه.'),
+ Book('ثلاثة الأصول','الإمام محمد بن عبد الوهاب','العقيدة والتوحيد','رسالة تعليمية في معرفة العبد ربه ودينه ونبيه.',contentAsset:'assets/books/thalathat_alusul.json'),
  Book('القواعد الأربع','الشيخ محمد بن عبد الوهاب','العقيدة والتوحيد','رسالة موجزة في قواعد تتعلق بالتوحيد والشرك.'),
  Book('كشف الشبهات','الشيخ محمد بن عبد الوهاب','العقيدة والتوحيد','رسالة في مناقشة شبهات تتعلق بمسائل التوحيد.'),
  Book('الحموية','شيخ الإسلام ابن تيمية','العقيدة والتوحيد','رسالة في مسائل الأسماء والصفات.'),
@@ -162,7 +162,7 @@ String normalizeArabic(String value) => value
  .replaceAll('آ','ا')
  .replaceAll('ى','ي');
 
-class Book { final String title,author,category,summary; final String? pdfAsset; final String? pdfFilePath; const Book(this.title,this.author,this.category,this.summary,{this.pdfAsset,this.pdfFilePath}); }
+class Book { final String title,author,category,summary; final String? pdfAsset; final String? pdfFilePath; final String? contentAsset; const Book(this.title,this.author,this.category,this.summary,{this.pdfAsset,this.pdfFilePath,this.contentAsset}); }
 const categories=['القرآن وعلومه','الحديث الشريف','العقيدة والتوحيد','الفقه والحديث','السيرة والشمائل','أصول الفقه','الحديث والآداب','الأذكار والرقائق','علوم اللغة العربية','كتب أهل السنة والجماعة','التاريخ والتراجم','المسلمون الجدد','قسم الأطفال'];
 
 Future<void> main() async { WidgetsFlutterBinding.ensureInitialized(); final p=await SharedPreferences.getInstance(); runApp(NoorApp(firstRun:!(p.getBool('seen_intro')??false))); }
@@ -309,19 +309,20 @@ class _BookDetailsState extends State<BookDetails> {
     Text(fontSize.round().toString()),
    ]),
    SelectableText(widget.book.summary,style:TextStyle(fontSize:fontSize,height:2.0,color:Colors.black87)),
-   if(widget.book.title=='جماع العلم') ...[
+   if(widget.book.contentAsset!=null) ...[
     const SizedBox(height:18),
     const Heading('النص الرقمي المرفق'),
     const SizedBox(height:8),
     FutureBuilder<String>(
-     future:rootBundle.loadString('assets/books/shafii_jima_alilm.json'),
+     future:rootBundle.loadString(widget.book.contentAsset!),
      builder:(context,snapshot){
       if(snapshot.connectionState!=ConnectionState.done)return const Center(child:CircularProgressIndicator());
-      if(snapshot.hasError||!snapshot.hasData)return const Text('تعذر تحميل النص. تحقق من اتصال حزمة الأصول بالتطبيق.');
+      if(snapshot.hasError||!snapshot.hasData)return const Text('تعذر تحميل النص. تحقق من تضمين ملف الكتاب في التطبيق.');
       try {
        final data=jsonDecode(snapshot.data!);
-       final chapters=(data['books']['جماع العلم']['chapters'] as List);
-       final text=chapters.map((chapter)=>chapter['text'] as String).join('\n\n');
+       final bookData=data['books'][widget.book.title] as Map<String,dynamic>;
+       final chapters=bookData['chapters'] as List;
+       final text=chapters.map((chapter)=>chapter['text'] as String).join('\\n\\n');
        return SelectableText(text,style:TextStyle(fontSize:fontSize,height:2.0,color:Colors.black87));
       } catch (_) {
        return const Text('صيغة ملف الكتاب غير صالحة للعرض.');
@@ -329,7 +330,7 @@ class _BookDetailsState extends State<BookDetails> {
      },
     ),
     const SizedBox(height:8),
-    const Text('المصدر الرقمي: OpenITI، والترخيص CC BY-NC-SA 4.0. هذه النسخة تحتاج إلى مقابلة على الطبعة المطبوعة، ولا يجوز استخدامها تجارياً دون إذن مستقل.',style:TextStyle(color:Colors.brown,fontSize:12,height:1.8)),
+    Text('المصدر الرقمي: راجع بيانات المصدر والترخيص في ملف الكتاب داخل المستودع. النص يحتاج إلى مقابلة علمية على الطبعة قبل الاعتماد النهائي.',style:const TextStyle(color:Colors.brown,fontSize:12,height:1.8)),
    ],
    const SizedBox(height:18),
    if(widget.book.pdfAsset!=null||widget.book.pdfFilePath!=null) ...[
