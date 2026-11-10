@@ -62,6 +62,18 @@ void main() {
         contains('تعلم الوضوء::غسل الكفين'));
   });
 
+  testWidgets('hadith library loads the sourced narration and its chain', (tester) async {
+    await tester.pumpWidget(const MaterialApp(home: HadithLibraryPage()));
+    await tester.pumpAndSettle();
+
+    expect(find.text('الأحاديث والأسانيد'), findsOneWidget);
+    expect(find.text('إنما الأعمال بالنيات'), findsOneWidget);
+    await tester.tap(find.text('إنما الأعمال بالنيات'));
+    await tester.pumpAndSettle();
+    expect(find.textContaining('الحميدي عبد الله بن الزبير'), findsOneWidget);
+    expect(find.text('الرواة بالترتيب'), findsOneWidget);
+  });
+
   test('book identity includes both title and author', () {
     expect(books.first.key, '${books.first.title}::${books.first.author}');
   });
