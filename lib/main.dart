@@ -371,10 +371,11 @@ class _OfflineReaderPageState extends State<OfflineReaderPage> {
    'assets/books/sunan_nasai_04.json','assets/books/sunan_nasai_05.json','assets/books/sunan_nasai_06.json',
   ],
   'سنن ابن ماجه':[
-   'assets/books/sunan_ibn_majah_01.json','assets/books/sunan_ibn_majah_02.json',
-   'assets/books/sunan_ibn_majah_03.json','assets/books/sunan_ibn_majah_04.json',
-   'assets/books/sunan_ibn_majah_05.json',
+   'assets/books/sunan_ibnmajah_01.json','assets/books/sunan_ibnmajah_02.json',
+   'assets/books/sunan_ibnmajah_03.json','assets/books/sunan_ibnmajah_04.json',
   ],
+  'الرسالة':['assets/books/shafii_risala.json'],
+  'اختلاف الحديث':['assets/books/shafii_ikhtilaf_hadith.json'],
  };
  static final Map<String,Future<Map<String,dynamic>>> _bookCache={};
  Future<Map<String,dynamic>> _loadBookRecord() => _bookCache.putIfAbsent(widget.book.title,() async {
