@@ -296,7 +296,7 @@ class _OfflineReaderPageState extends State<OfflineReaderPage> {
   ],
   'صحيح مسلم':[
    'assets/books/sahih_muslim_01.json','assets/books/sahih_muslim_02.json','assets/books/sahih_muslim_03.json',
-   'assets/books/sahih_muslim_04.json','assets/books/sahih_muslim_05.json',
+   'assets/books/sahih_muslim_04.json','assets/books/sahih_muslim_05.json','assets/books/sahih_muslim_06.json',
   ],
  };
  static final Map<String,Future<Map<String,dynamic>>> _bookCache={};
