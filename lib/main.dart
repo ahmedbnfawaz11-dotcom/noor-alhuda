@@ -247,7 +247,7 @@ class SunniBooksPage extends StatelessWidget {
 }
 class CategoryPage extends StatelessWidget {
  final String category;final Set<String> saved;final Future<void> Function(Book) onToggle;const CategoryPage({super.key,required this.category,required this.saved,required this.onToggle});
- @override Widget build(BuildContext c){final list=category=='كتب أهل السنة والجماعة'?books.toList():catalogBooks.where((b)=>b.category==category||(category=='الحديث الشريف'&&b.category=='الحديث والآداب')).toList();return Directionality(textDirection:TextDirection.rtl,child:Scaffold(appBar:AppBar(title:Text(category)),body:list.isEmpty?const Center(child:Text('سيضاف فهرس هذا القسم بعد مراجعة مصادره.')):ListView(padding:const EdgeInsets.all(12),children:list.map((b)=>BookTile(book:b,saved:saved.contains(b.title),onSave:()=>onToggle(b))).toList())));}
+ @override Widget build(BuildContext c){final list=category=='كتب أهل السنة والجماعة'?catalogBooks.toList():catalogBooks.where((b)=>b.category==category||(category=='الحديث الشريف'&&b.category=='الحديث والآداب')).toList();return Directionality(textDirection:TextDirection.rtl,child:Scaffold(appBar:AppBar(title:Text(category)),body:list.isEmpty?const Center(child:Text('سيضاف فهرس هذا القسم بعد مراجعة مصادره.')):ListView(padding:const EdgeInsets.all(12),children:list.map((b)=>BookTile(book:b,saved:saved.contains(b.title),onSave:()=>onToggle(b))).toList())));}
 }
 class BookDetails extends StatefulWidget {
  final Book book;
