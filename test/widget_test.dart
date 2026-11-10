@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:noor_alhuda/main.dart';
@@ -53,6 +54,11 @@ void main() {
     SharedPreferences.setMockInitialValues({});
     await tester.pumpWidget(const MaterialApp(home: ChildrenPage()));
     await tester.pumpAndSettle();
+    await tester.scrollUntilVisible(
+      find.text('تعلم الوضوء'),
+      200,
+      scrollable: find.byType(Scrollable).first,
+    );
     await tester.tap(find.text('تعلم الوضوء'));
     await tester.pumpAndSettle();
     await tester.tap(find.text('غسل الكفين'));
@@ -70,16 +76,21 @@ void main() {
     expect(find.text('إنما الأعمال بالنيات'), findsOneWidget);
     await tester.tap(find.text('إنما الأعمال بالنيات'));
     await tester.pumpAndSettle();
-    expect(find.textContaining('الحميدي عبد الله بن الزبير'), findsOneWidget);
+    expect(find.text('1. الحميدي عبد الله بن الزبير'), findsOneWidget);
     expect(find.text('الرواة بالترتيب'), findsOneWidget);
   });
 
   testWidgets('Ajurrumiyyah full text is loaded from the bundled book asset', (tester) async {
     final ajurrumiyyah = books.firstWhere((book) => book.title == 'الآجرومية');
+    final bundledText = await tester.runAsync(
+      () => rootBundle.loadString(ajurrumiyyah.contentAsset!),
+    );
+    expect(bundledText, contains('الكلام هو اللفظ المركب المفيد بالوضع'));
     await tester.pumpWidget(MaterialApp(
       home: BookDetails(book: ajurrumiyyah, saved: false, onSave: () {}),
     ));
-    await tester.pumpAndSettle();
+    await tester.pump();
+    await tester.pump(const Duration(milliseconds: 100));
 
     expect(find.textContaining('الكلام هو اللفظ المركب المفيد بالوضع'), findsOneWidget);
     expect(find.textContaining('ويكي مصدر'), findsOneWidget);
@@ -87,18 +98,22 @@ void main() {
 
   testWidgets('structured offline reader supports chapter selection and in-book search', (tester) async {
     SharedPreferences.setMockInitialValues({});
+    await tester.runAsync(
+      () => rootBundle.loadString('assets/books/alajurrumiyyah.json'),
+    );
     await tester.pumpWidget(const MaterialApp(
       home: StructuredBookReader(
         assetPath: 'assets/books/alajurrumiyyah.json',
         bookTitle: 'الآجرومية',
       ),
     ));
-    await tester.pumpAndSettle();
+    await tester.pump();
+    await tester.pump(const Duration(milliseconds: 100));
 
     expect(find.text('فهرس الفصول'), findsOneWidget);
     expect(find.text('متن الآجرومية'), findsOneWidget);
     await tester.enterText(find.byType(TextField), 'الكلام هو');
-    await tester.pumpAndSettle();
+    await tester.pump();
     expect(find.textContaining('نتائج البحث'), findsOneWidget);
     expect(find.textContaining('متن الآجرومية'), findsWidgets);
   });
