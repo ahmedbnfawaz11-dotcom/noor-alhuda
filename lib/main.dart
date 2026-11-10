@@ -236,7 +236,7 @@ class _BookDetailsState extends State<BookDetails> {
    const SizedBox(height:8),
    Row(children:[
     const Text('حجم الخط'),
-    Expanded(child:Slider(min:14,max:26,divisions:6,value:fontSize,onChanged:_saveFontSize)),
+    Expanded(child:Slider(min:14,max:26,divisions:6,value:fontSize,onChanged:(v)=>setState(()=>fontSize=v))),
     Text(fontSize.round().toString()),
    ]),
    SelectableText(widget.book.summary,style:TextStyle(fontSize:fontSize,height:2.0,color:Colors.black87)),
@@ -348,7 +348,7 @@ class _OfflineReaderPageState extends State<OfflineReaderPage> {
    const SizedBox(height:14),
    TextField(controller:searchController,onChanged:(value)=>setState(()=>searchQuery=value),decoration:InputDecoration(hintText:'ابحث داخل فصول الكتاب...',prefixIcon:const Icon(Icons.search,color:green),suffixIcon:searchQuery.isEmpty?null:IconButton(onPressed:(){searchController.clear();setState(()=>searchQuery='');},icon:const Icon(Icons.close)),filled:true,fillColor:Colors.white,border:OutlineInputBorder(borderRadius:BorderRadius.circular(12)))),
    const SizedBox(height:8),
-   Row(children:[const Text('حجم الخط'),Expanded(child:Slider(min:15,max:30,divisions:10,value:fontSize,onChanged:(v)=>setState(()=>fontSize=v))),Text(fontSize.round().toString())]),
+   Row(children:[const Text('حجم الخط'),Expanded(child:Slider(min:15,max:30,divisions:10,value:fontSize,onChanged:_saveFontSize)),Text(fontSize.round().toString())]),
    if(chapters.isEmpty)const Padding(padding:EdgeInsets.all(20),child:Text('لا توجد فصول مضافة لهذا الكتاب بعد.',textAlign:TextAlign.center))
    else if(visibleChapters.isEmpty)const Padding(padding:EdgeInsets.all(20),child:Text('لا توجد فصول أو مقاطع تطابق عبارة البحث.',textAlign:TextAlign.center))
    else ...visibleChapters.map((item)=>Card(color:Colors.white,child:ExpansionTile(title:Text(item['title']?.toString()??'فصل',style:const TextStyle(color:green,fontWeight:FontWeight.bold)),children:[Padding(padding:const EdgeInsets.all(16),child:SelectableText(item['text']?.toString()??'',style:TextStyle(fontSize:fontSize,height:2.0)))]))),
