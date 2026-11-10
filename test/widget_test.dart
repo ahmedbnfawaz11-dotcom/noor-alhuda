@@ -49,6 +49,19 @@ void main() {
     expect(prefs.getString('note_${books.first.key}'), 'فائدة أراجعها لاحقاً');
   });
 
+  testWidgets('children learning progress is saved locally', (tester) async {
+    SharedPreferences.setMockInitialValues({});
+    await tester.pumpWidget(const MaterialApp(home: ChildrenPage()));
+    await tester.pumpAndSettle();
+    await tester.tap(find.text('تعلم الوضوء'));
+    await tester.pumpAndSettle();
+    await tester.tap(find.text('غسل الكفين'));
+    await tester.pumpAndSettle();
+    final prefs = await SharedPreferences.getInstance();
+    expect(prefs.getStringList('children_completed_steps'),
+        contains('تعلم الوضوء::غسل الكفين'));
+  });
+
   test('book identity includes both title and author', () {
     expect(books.first.key, '${books.first.title}::${books.first.author}');
   });
