@@ -74,6 +74,17 @@ void main() {
     expect(find.text('الرواة بالترتيب'), findsOneWidget);
   });
 
+  testWidgets('Ajurrumiyyah full text is loaded from the bundled book asset', (tester) async {
+    final ajurrumiyyah = books.firstWhere((book) => book.title == 'الآجرومية');
+    await tester.pumpWidget(MaterialApp(
+      home: BookDetails(book: ajurrumiyyah, saved: false, onSave: () {}),
+    ));
+    await tester.pumpAndSettle();
+
+    expect(find.textContaining('الكلام هو اللفظ المركب المفيد بالوضع'), findsOneWidget);
+    expect(find.textContaining('ويكي مصدر'), findsOneWidget);
+  });
+
   test('book identity includes both title and author', () {
     expect(books.first.key, '${books.first.title}::${books.first.author}');
   });
