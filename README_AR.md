@@ -57,3 +57,5 @@
 مصدر بيانات الحديث: https://github.com/fawazahmed0/hadith-api/tree/1/editions — ملف الترخيص: https://github.com/fawazahmed0/hadith-api/blob/1/LICENSE.
 
 - **الأحاديث القدسية:** 40 حديثاً، من بيانات `fawazahmed0/hadith-api`، وفق ترخيص المستودع The Unlicense.
+
+- **الأربعون حديثاً للشاه ولي الله الدهلوي:** 40 حديثاً، من بيانات `fawazahmed0/hadith-api`، وفق ترخيص المستودع The Unlicense.
