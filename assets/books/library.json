@@ -467,8 +467,8 @@
       "review_note": "Tanzil Quran Text (Uthmani, Version 1.1), Copyright (C) 2007-2024 Tanzil Project. License: Creative Commons Attribution 3.0. يُسمح بنسخ النص وتوزيعه حرفياً دون تغيير. المصدر: https://tanzil.net/ — راجع https://tanzil.net/docs/Text_License"
     },
     "الأربعون النووية": {
-      "source": "fawazahmed0/hadith-api — editions/ara-nawawi.json, branch 1 (Arabic text); repository license: The Unlicense",
-      "edition": "النص العربي كما ورد في المصدر الرقمي؛ 42 حديثاً مرقماً",
+      "source": "fawazahmed0/hadith-api, edition ara-nawawi, branch 1",
+      "edition": "النص العربي كما ورد في ملف المصدر؛ 42 حديثاً",
       "author": "الإمام يحيى بن شرف النووي",
       "chapters": [
         {
@@ -640,7 +640,7 @@
           "text": "عَنْ أَنَسِ بْنِ مَالِكٍ رَضِيَ اللهُ عَنْهُ قَالَ: سَمِعْت رَسُولَ اللَّهِ صلى الله عليه و سلم يَقُولُ: قَالَ اللَّهُ تَعَالَى: يَا ابْنَ آدَمَ! إِنَّكَ مَا دَعَوْتنِي وَرَجَوْتنِي غَفَرْتُ لَك عَلَى مَا كَانَ مِنْك وَلَا أُبَالِي، يَا ابْنَ آدَمَ! لَوْ بَلَغَتْ ذُنُوبُك عَنَانَ السَّمَاءِ ثُمَّ اسْتَغْفَرْتنِي غَفَرْتُ لَك، يَا ابْنَ آدَمَ! إنَّك لَوْ أتَيْتنِي بِقُرَابِ الْأَرْضِ خَطَايَا ثُمَّ لَقِيتنِي لَا تُشْرِكُ بِي شَيْئًا لَأَتَيْتُك بِقُرَابِهَا مَغْفِرَةً . رَوَاهُ التِّرْمِذِيُّ [رقم:3540]، وَقَالَ: حَدِيثٌ حَسَنٌ صَحِيحٌ"
         }
       ],
-      "review_note": "نُقل النص العربي كما في المصدر دون إعادة صياغة. يتضمن متن الأربعين النووية 42 حديثاً في هذه النسخة الرقمية. المصدر: https://github.com/fawazahmed0/hadith-api/tree/1/editions — ترخيص المستودع: The Unlicense."
+      "review_note": "مصدر البيانات مرخّص بترخيص Unlicense (إتاحة للملك العام). أُدرج المتن كما ورد في المصدر دون إضافة تخريج أو تصحيح من التطبيق. يلزم التحقق العلمي من النص والتخريج عند المراجعة."
     },
     "موطأ الإمام مالك": {
       "source": "fawazahmed0/hadith-api — editions/ara-malik.json, branch 1; Arabic text; repository license Unlicense (public-domain dedication).",
