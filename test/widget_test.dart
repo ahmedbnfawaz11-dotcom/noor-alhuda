@@ -49,6 +49,17 @@ void main() {
     expect(prefs.getString('note_${books.first.title}'), 'فائدة أراجعها لاحقاً');
   });
 
+  testWidgets('offline reader opens while local content loads', (tester) async {
+    await tester.pumpWidget(const MaterialApp(
+      home: OfflineReaderPage(
+        book: const Book('كتاب غير مدرج للاختبار', 'مؤلف غير محدد', 'اختبار', ''),
+      ),
+    ));
+    await tester.pump();
+
+    expect(find.text('قارئ الكتب'), findsOneWidget);
+  });
+
   test('Arabic catalog search normalization ignores diacritics', () {
     expect(
       normalizeArabic('رِيَاضُ الصَّالِحِينَ'),

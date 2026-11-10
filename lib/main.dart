@@ -1,14 +1,20 @@
+import 'dart:convert';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 const green = Color(0xFF123B30), gold = Color(0xFFC6A45C), paper = Color(0xFFF6F0E4);
 const books = <Book>[
+ Book('القرآن الكريم','كلام الله تعالى','القرآن وعلومه','المصحف الشريف بالرسم العثماني، كاملاً في 114 سورة، من نص مشروع تنزيل الموثق.'),
  Book('صحيح البخاري','الإمام محمد بن إسماعيل البخاري','الحديث الشريف','من أمهات كتب الحديث النبوي.'),
  Book('صحيح مسلم','الإمام مسلم بن الحجاج','الحديث الشريف','مصنف من أشهر دواوين السنة النبوية.'),
  Book('رياض الصالحين','الإمام يحيى بن شرف النووي','الحديث والآداب','أحاديث في الإيمان والعبادات والأخلاق والآداب.'),
  Book('الأربعون النووية','الإمام يحيى بن شرف النووي','الحديث الشريف','مجموعة مشهورة من جوامع أحاديث النبي صلى الله عليه وسلم.'),
+ Book('الأحاديث القدسية','أحاديث نبوية قدسية','الحديث الشريف','أربعون حديثاً قدسياً من النصوص الحديثية الموثقة المصدر.'),
+ Book('الأربعون حديثاً للشاه ولي الله الدهلوي','الإمام شاه ولي الله الدهلوي','الحديث الشريف','أربعون حديثاً من مجموعة الشاه ولي الله الدهلوي.'),
  Book('الأدب المفرد','الإمام محمد بن إسماعيل البخاري','الحديث والآداب','مصنف في بر الوالدين وصلة الرحم وحسن الخلق.'),
  Book('الرسالة','الإمام محمد بن إدريس الشافعي','أصول الفقه','من أوائل المصنفات المستقلة في أصول الفقه.'),
+ Book('جماع العلم','الإمام محمد بن إدريس الشافعي','أصول الفقه','رسالة في حجية السنة ووجوب اتباع أمر رسول الله صلى الله عليه وسلم.'),
  Book('تفسير القرآن العظيم','الإمام إسماعيل بن عمر ابن كثير','القرآن وعلومه','تفسير بالمأثور يعتني بالآيات والأحاديث وأقوال السلف.'),
  Book('العقيدة الواسطية','شيخ الإسلام ابن تيمية','العقيدة والتوحيد','رسالة موجزة في أصول الاعتقاد.'),
  Book('كتاب التوحيد','الإمام محمد بن عبد الوهاب','العقيدة والتوحيد','كتاب في تقرير توحيد العبادة.'),
@@ -70,7 +76,7 @@ const books = <Book>[
  Book('دلائل الإعجاز','عبد القاهر الجرجاني','علوم اللغة العربية','مصنف أصيل في علم المعاني وأسرار النظم والإعجاز البياني.'), 
  Book('أسرار البلاغة','عبد القاهر الجرجاني','علوم اللغة العربية','بحث تراثي في البيان والتشبيه والاستعارة ووجوه التصوير.'), 
  Book('مغني اللبيب عن كتب الأعاريب','ابن هشام الأنصاري','علوم اللغة العربية','مرجع نحوي في الحروف والأدوات والتراكيب والإعراب.'), 
- Book('قطر الندى وبل الصدى','ابن هشام الأنصاري','علوم اللغة العربية','متن مختصر في أبواب النحو مع شرح لمسائلها.')
+ Book('قطر الندى وبل الصدى','ابن هشام الأنصاري','علوم اللغة العربية','متن مختصر في أبواب النحو مع شرح لمسائلها.'),
  Book('صحيح ابن خزيمة','الإمام محمد بن إسحاق ابن خزيمة','الحديث الشريف','مصنف حديثي مرتب على أبواب الفقه، وتحتاج أحاديثه إلى مراجعة أحكامها بحسب الطبعات والتحقيقات.'),
  Book('صحيح ابن حبان','الإمام محمد بن حبان البستي','الحديث الشريف','مصنف حديثي مشهور رتبه ابن حبان على تقسيمات كتابه، وله طبعات وشروح متعددة.'),
  Book('المستدرك على الصحيحين','الإمام محمد بن عبد الله الحاكم النيسابوري','الحديث الشريف','كتاب حديثي جمع فيه الحاكم أحاديث قال إنها على شرط الصحيحين أو أحدهما، وتعقبه أئمة في أحكامه.'),
@@ -151,6 +157,7 @@ String normalizeArabic(String value) => value
 
 class Book { final String title,author,category,summary; const Book(this.title,this.author,this.category,this.summary); }
 const categories=['القرآن وعلومه','الحديث الشريف','العقيدة والتوحيد','الفقه والحديث','السيرة والشمائل','أصول الفقه','الحديث والآداب','الأذكار والرقائق','علوم اللغة العربية','كتب أهل السنة والجماعة','التاريخ والتراجم','المسلمون الجدد','قسم الأطفال'];
+const categoryIcons=<IconData>[Icons.menu_book_rounded,Icons.auto_stories,Icons.mosque,Icons.balance,Icons.history_edu,Icons.account_balance,Icons.library_books,Icons.favorite,Icons.translate,Icons.collections_bookmark,Icons.history,Icons.volunteer_activism,Icons.child_friendly];
 
 Future<void> main() async { WidgetsFlutterBinding.ensureInitialized(); final p=await SharedPreferences.getInstance(); runApp(NoorApp(firstRun:!(p.getBool('seen_intro')??false))); }
 class NoorApp extends StatelessWidget { final bool firstRun; const NoorApp({super.key,required this.firstRun}); @override Widget build(BuildContext c)=>MaterialApp(title:'نور الهدى',debugShowCheckedModeBanner:false,theme:ThemeData(useMaterial3:true,scaffoldBackgroundColor:paper,colorScheme:ColorScheme.fromSeed(seedColor:green,primary:green,secondary:gold),appBarTheme:const AppBarTheme(backgroundColor:green,foregroundColor:Colors.white,centerTitle:true)),home:LaunchPage(firstRun:firstRun)); }
@@ -196,7 +203,7 @@ class _HomeState extends State<HomePage> {
  body:tab==1?Favorites(saved:saved,onToggle:toggle):tab==2?const NewMuslimPage():tab==3?const ChildrenPage():ListView(padding:const EdgeInsets.all(16),children:[
  Container(padding:const EdgeInsets.all(18),decoration:BoxDecoration(gradient:const LinearGradient(colors:[green,Color(0xFF1D5A46)]),borderRadius:BorderRadius.circular(22),border:Border.all(color:gold)),child:Column(crossAxisAlignment:CrossAxisAlignment.start,children:[const Text('﴿ وَقُل رَّبِّ زِدْنِي عِلْمًا ﴾',style:TextStyle(color:gold,fontSize:23,fontWeight:FontWeight.bold)),const SizedBox(height:7),const Text('بوابتك إلى مصادر العلم والتراث الإسلامي',style:TextStyle(color:Colors.white)),const SizedBox(height:15),TextField(onChanged:(v)=>setState(()=>query=v),decoration:InputDecoration(hintText:'ابحث عن كتاب أو مؤلف أو قسم...',prefixIcon:const Icon(Icons.search,color:green),filled:true,fillColor:paper,border:OutlineInputBorder(borderRadius:BorderRadius.circular(14),borderSide:BorderSide.none)))])),
  const SizedBox(height:20),const Heading('أقسام الموسوعة'),const SizedBox(height:10),
- GridView.builder(shrinkWrap:true,physics:const NeverScrollableScrollPhysics(),itemCount:categories.length,gridDelegate:const SliverGridDelegateWithFixedCrossAxisCount(crossAxisCount:2,mainAxisSpacing:9,crossAxisSpacing:9,childAspectRatio:2.05),itemBuilder:(ctx,i)=>InkWell(onTap:()=>Navigator.push(ctx,MaterialPageRoute(builder:(_)=>CategoryPage(category:categories[i],saved:saved,onToggle:toggle))),child:Container(decoration:BoxDecoration(color:Colors.white,borderRadius:BorderRadius.circular(14),border:Border.all(color:const Color(0xFFDDCBA7))),child:Center(child:Text(categories[i],textAlign:TextAlign.center,style:const TextStyle(color:green,fontWeight:FontWeight.bold)))))),
+ GridView.builder(shrinkWrap:true,physics:const NeverScrollableScrollPhysics(),itemCount:categories.length,gridDelegate:const SliverGridDelegateWithFixedCrossAxisCount(crossAxisCount:2,mainAxisSpacing:9,crossAxisSpacing:9,childAspectRatio:2.05),itemBuilder:(ctx,i)=>InkWell(onTap:()=>Navigator.push(ctx,MaterialPageRoute(builder:(_)=>CategoryPage(category:categories[i],saved:saved,onToggle:toggle))),child:Container(padding:const EdgeInsets.symmetric(horizontal:8,vertical:7),decoration:BoxDecoration(gradient:const LinearGradient(begin:Alignment.topRight,end:Alignment.bottomLeft,colors:[Colors.white,Color(0xFFF4EEDC)]),borderRadius:BorderRadius.circular(15),border:Border.all(color:const Color(0xFFC6A45C),width:1.05),boxShadow:const [BoxShadow(color:Color(0x12000000),blurRadius:5,offset:Offset(0,2))]),child:Column(mainAxisAlignment:MainAxisAlignment.center,children:[Icon(categoryIcons[i],color:gold,size:25),const SizedBox(height:5),Text(categories[i],textAlign:TextAlign.center,maxLines:2,overflow:TextOverflow.ellipsis,style:const TextStyle(color:green,fontWeight:FontWeight.bold,fontSize:12.5))])))),
  const SizedBox(height:20),Heading(query.isEmpty?'كتب مقترحة للفهرسة':'نتائج البحث'),
  if(matches.isEmpty)const Padding(padding:EdgeInsets.all(20),child:Text('لا توجد نتائج مطابقة.',textAlign:TextAlign.center))else ...matches.map((b)=>BookTile(book:b,saved:saved.contains(b.title),onSave:()=>toggle(b))),
  const SizedBox(height:10),const Text('تنبيه: هذه نسخة تأسيسية للفهرس والتصميم. النصوص الكاملة تحتاج إلى إدراج نسخ رقمية موثوقة ومراجعة بياناتها قبل إتاحتها.',style:TextStyle(color:Colors.brown,fontSize:12,height:1.7))
@@ -205,7 +212,7 @@ class _HomeState extends State<HomePage> {
  ));
  }
 }
-class Heading extends StatelessWidget {final String title;const Heading(this.title,{super.key});@override Widget build(BuildContext c)=>Row(children:[Container(width:4,height:22,color:gold),const SizedBox(width:9),Text(title,style:const TextStyle(color:green,fontSize:18,fontWeight:FontWeight.bold))]);}
+class Heading extends StatelessWidget {final String title;const Heading(this.title,{super.key});@override Widget build(BuildContext c)=>Row(children:[Container(width:4,height:22,decoration:BoxDecoration(color:gold,borderRadius:BorderRadius.circular(4))),const SizedBox(width:9),Text(title,style:const TextStyle(color:green,fontSize:18,fontWeight:FontWeight.bold)),const SizedBox(width:8),const Icon(Icons.auto_awesome,color:gold,size:15),const SizedBox(width:5),const Expanded(child:Divider(color:Color(0xFFDCC99E),thickness:1))]);}
 class BookTile extends StatelessWidget {
  final Book book;final bool saved;final VoidCallback onSave;const BookTile({super.key,required this.book,required this.saved,required this.onSave});
  @override Widget build(BuildContext c)=>Card(color:Colors.white,elevation:0,margin:const EdgeInsets.symmetric(vertical:5),shape:RoundedRectangleBorder(borderRadius:BorderRadius.circular(14),side:const BorderSide(color:Color(0xFFDDCBA7))),child:ListTile(leading:Container(width:42,height:48,decoration:BoxDecoration(color:green,borderRadius:BorderRadius.circular(8)),child:const Icon(Icons.menu_book,color:gold)),title:Text(book.title,style:const TextStyle(color:green,fontWeight:FontWeight.bold)),subtitle:Text(book.author+'\n'+book.category,maxLines:2,overflow:TextOverflow.ellipsis),trailing:IconButton(onPressed:onSave,icon:Icon(saved?Icons.bookmark:Icons.bookmark_border,color:gold)),onTap:()=>Navigator.push(c,MaterialPageRoute(builder:(_)=>BookDetails(book:book,saved:saved,onSave:onSave)))));
@@ -298,18 +305,166 @@ class _BookDetailsState extends State<BookDetails> {
    SelectableText(widget.book.summary,style:TextStyle(fontSize:fontSize,height:2.0,color:Colors.black87)),
    const SizedBox(height:18),
    FilledButton.icon(onPressed:widget.onSave,icon:Icon(widget.saved?Icons.bookmark:Icons.bookmark_add_outlined),label:Text(widget.saved?'إزالة من مكتبتي':'أضف إلى مكتبتي')),
-   const SizedBox(height:20),
+   const SizedBox(height:18),
+   FilledButton.icon(onPressed:()=>Navigator.push(c,MaterialPageRoute(builder:(_)=>OfflineReaderPage(book:widget.book))),icon:const Icon(Icons.chrome_reader_mode_outlined),label:const Text('فتح قارئ الكتاب'),style:FilledButton.styleFrom(minimumSize:const Size(double.infinity,50))),
+   const SizedBox(height:18),
    const Heading('ملاحظاتي الخاصة'),
    const SizedBox(height:8),
    TextField(controller:noteController,minLines:3,maxLines:7,decoration:InputDecoration(hintText:'اكتب فوائدك أو ملاحظاتك حول هذا الكتاب...',filled:true,fillColor:Colors.white,border:OutlineInputBorder(borderRadius:BorderRadius.circular(12)))),
    const SizedBox(height:8),
    FilledButton.tonalIcon(onPressed:!noteLoaded||noteSaving?null:saveNote,icon:const Icon(Icons.save_outlined),label:Text(noteSaving?'جارٍ الحفظ...':'احفظ ملاحظاتي على الجهاز')),
    const SizedBox(height:18),
-   Container(padding:const EdgeInsets.all(14),decoration:BoxDecoration(color:const Color(0xFFFFF4DD),borderRadius:BorderRadius.circular(12),border:Border.all(color:gold)),child:const Text('تنبيه علمي: هذه الصفحة تعرض بيانات الفهرس والنبذة فقط. النص الكامل للكتاب غير مرفق في هذه النسخة. لن ننسب نصوصاً إلى مؤلفيها قبل التحقق من النسخة والطبعة والمصدر وحقوق الإتاحة.',style:TextStyle(color:Colors.brown,height:1.9))),
+   if(widget.book.title=='القرآن الكريم') Container(padding:const EdgeInsets.all(14),decoration:BoxDecoration(color:const Color(0xFFFFF4DD),borderRadius:BorderRadius.circular(12),border:Border.all(color:gold)),child:const Text('النص القرآني الكامل متاح داخل التطبيق دون إنترنت، منقول حرفياً عن مشروع تنزيل بالرسم العثماني، مع حفظ إشعار المصدر والترخيص.',style:TextStyle(color:green,height:1.9))) else Container(padding:const EdgeInsets.all(14),decoration:BoxDecoration(color:const Color(0xFFFFF4DD),borderRadius:BorderRadius.circular(12),border:Border.all(color:gold)),child:const Text('تنبيه علمي: هذه الصفحة تعرض بيانات الفهرس والنبذة فقط. النص الكامل لهذا الكتاب غير مرفق بعد. لن ننسب نصوصاً إلى مؤلفيها قبل التحقق من النسخة والطبعة والمصدر وحقوق الإتاحة.',style:TextStyle(color:Colors.brown,height:1.9))),
   ]),
  ));
 }
 
+class OfflineReaderPage extends StatefulWidget {
+ final Book book;
+ const OfflineReaderPage({super.key,required this.book});
+ @override State<OfflineReaderPage> createState()=>_OfflineReaderPageState();
+}
+class _OfflineReaderPageState extends State<OfflineReaderPage> {
+ Map<String,dynamic>? record;
+ bool loading=true;
+ String? error;
+ double fontSize=19;
+ String searchQuery='';
+ final TextEditingController searchController=TextEditingController();
+ final ScrollController readerScrollController=ScrollController();
+ double lastSavedPosition=0;
+ String get _fontKey=>'reader_font_${widget.book.title}';
+ String get _positionKey=>'reader_position_${widget.book.title}';
+ @override void initState(){super.initState();readerScrollController.addListener(_saveReadingPosition);loadBook();}
+ @override void dispose(){readerScrollController.removeListener(_saveReadingPosition);searchController.dispose();readerScrollController.dispose();super.dispose();}
+ Future<void> _saveReadingPosition() async {
+  if(!readerScrollController.hasClients)return;
+  final position=readerScrollController.position.pixels;
+  if((position-lastSavedPosition).abs()<250)return;
+  lastSavedPosition=position;
+  final prefs=await SharedPreferences.getInstance();
+  await prefs.setDouble(_positionKey,position);
+ }
+ Future<void> _saveFontSize(double value) async {
+  setState(()=>fontSize=value);
+  final prefs=await SharedPreferences.getInstance();
+  await prefs.setDouble(_fontKey,value);
+ }
+ static const _splitBookAssets=<String,List<String>>{
+  'صحيح البخاري':[
+   'assets/books/sahih_bukhari_01.json','assets/books/sahih_bukhari_02.json','assets/books/sahih_bukhari_03.json',
+   'assets/books/sahih_bukhari_04.json','assets/books/sahih_bukhari_05.json','assets/books/sahih_bukhari_06.json',
+  ],
+  'صحيح مسلم':[
+   'assets/books/sahih_muslim_01.json','assets/books/sahih_muslim_02.json','assets/books/sahih_muslim_03.json',
+   'assets/books/sahih_muslim_04.json','assets/books/sahih_muslim_05.json','assets/books/sahih_muslim_06.json',
+  ],
+  'سنن أبي داود':[
+   'assets/books/sunan_abi_dawud_01.json','assets/books/sunan_abi_dawud_02.json','assets/books/sunan_abi_dawud_03.json',
+   'assets/books/sunan_abi_dawud_04.json','assets/books/sunan_abi_dawud_05.json','assets/books/sunan_abi_dawud_06.json',
+  ],
+  'جامع الترمذي':[
+   'assets/books/jami_tirmidhi_01.json','assets/books/jami_tirmidhi_02.json','assets/books/jami_tirmidhi_03.json',
+   'assets/books/jami_tirmidhi_04.json','assets/books/jami_tirmidhi_05.json','assets/books/jami_tirmidhi_06.json',
+  ],
+  'سنن النسائي':[
+   'assets/books/sunan_nasai_01.json','assets/books/sunan_nasai_02.json','assets/books/sunan_nasai_03.json',
+   'assets/books/sunan_nasai_04.json','assets/books/sunan_nasai_05.json','assets/books/sunan_nasai_06.json',
+  ],
+  'سنن ابن ماجه':[
+   'assets/books/sunan_ibnmajah_01.json','assets/books/sunan_ibnmajah_02.json',
+   'assets/books/sunan_ibnmajah_03.json','assets/books/sunan_ibnmajah_04.json',
+  ],
+  'الرسالة':['assets/books/shafii_risala.json'],
+  'اختلاف الحديث':['assets/books/shafii_ikhtilaf_hadith.json'],
+  'جماع العلم':['assets/books/shafii_jima_alilm.json'],
+ };
+ static final Map<String,Future<Map<String,dynamic>>> _bookCache={};
+ Future<Map<String,dynamic>> _loadBookRecord() => _bookCache.putIfAbsent(widget.book.title,() async {
+  final paths=_splitBookAssets[widget.book.title];
+  if(paths!=null){
+   final raws=await Future.wait(paths.map((path)=>rootBundle.loadString(path)));
+   final records=raws.map((raw){
+    final decoded=jsonDecode(raw) as Map<String,dynamic>;
+    final all=decoded['books'] as Map<String,dynamic>;
+    return Map<String,dynamic>.from(all[widget.book.title] as Map);
+   }).toList();
+   final combined=Map<String,dynamic>.from(records.first);
+   combined['chapters']=records.expand((item)=>(item['chapters'] as List<dynamic>? ?? [])).toList();
+   return combined;
+  }
+  final raw=await rootBundle.loadString('assets/books/library.json');
+  final decoded=jsonDecode(raw) as Map<String,dynamic>;
+  final all=decoded['books'] as Map<String,dynamic>? ?? {};
+  final item=all[widget.book.title];
+  return item is Map?Map<String,dynamic>.from(item):<String,dynamic>{};
+ });
+ Future<void> loadBook() async {
+  try {
+   final item=await _loadBookRecord();
+   final prefs=await SharedPreferences.getInstance();
+   final savedFont=prefs.getDouble(_fontKey);
+   final savedPosition=prefs.getDouble(_positionKey)??0;
+   if(!mounted)return;
+   setState((){
+    record=item.isEmpty?null:item;
+    if(savedFont!=null)fontSize=savedFont.clamp(15.0,30.0).toDouble();
+    loading=false;
+   });
+   if(item.isNotEmpty && savedPosition>0){
+    WidgetsBinding.instance.addPostFrameCallback((_){
+     if(!mounted||!readerScrollController.hasClients)return;
+     final max=readerScrollController.position.maxScrollExtent;
+     final restored=savedPosition.clamp(0.0,max).toDouble();
+     readerScrollController.jumpTo(restored);
+     lastSavedPosition=restored;
+    });
+   }
+  } catch (_) {
+   if(!mounted)return;
+   setState((){loading=false;error='تعذر تحميل فهرس المحتوى المحلي.';});
+  }
+ }
+ @override Widget build(BuildContext context)=>Directionality(textDirection:TextDirection.rtl,child:Scaffold(
+  appBar:AppBar(title:const Text('قارئ الكتب')),
+  body:loading?const Center(child:CircularProgressIndicator()):error!=null
+   ?Center(child:Padding(padding:const EdgeInsets.all(24),child:Text(error!,textAlign:TextAlign.center)))
+   :record==null?_emptyState():_readerContent(),
+ ));
+ Widget _emptyState()=>ListView(padding:const EdgeInsets.all(22),children:[
+  const SizedBox(height:24),const Icon(Icons.menu_book_outlined,color:gold,size:68),const SizedBox(height:18),
+  Text(widget.book.title,textAlign:TextAlign.center,style:const TextStyle(color:green,fontSize:24,fontWeight:FontWeight.bold)),
+  const SizedBox(height:10),Text(widget.book.author,textAlign:TextAlign.center),const SizedBox(height:24),
+  Container(padding:const EdgeInsets.all(18),decoration:BoxDecoration(color:const Color(0xFFFFF4DD),borderRadius:BorderRadius.circular(14),border:Border.all(color:gold)),child:const Column(children:[
+   Icon(Icons.library_books_outlined,color:green,size:32),SizedBox(height:10),
+   Text('النص الكامل لهذا الكتاب غير متاح داخل النسخة الحالية',textAlign:TextAlign.center,style:TextStyle(fontWeight:FontWeight.bold,color:green,fontSize:17)),
+   SizedBox(height:8),
+   Text('أُعدّ القارئ للعمل دون إنترنت، وسيظهر النص هنا بعد إضافة نسخة موثوقة موثقة المصدر والطبعة ومسموح بإعادة توزيعها. لم نضع نصاً تجريبياً أو منسوباً للمؤلف بغير تحقق.',textAlign:TextAlign.center,style:TextStyle(height:1.9)),
+  ])),
+ ]);
+ Widget _readerContent(){
+  final chapters=(record!['chapters'] as List<dynamic>? ?? []).where((chapter)=>chapter is Map).map((chapter)=>Map<String,dynamic>.from(chapter as Map)).toList();
+  final source=record!['source']?.toString() ?? '';
+  final edition=record!['edition']?.toString() ?? '';
+  final normalized=normalizeArabic(searchQuery.trim());
+  final visibleChapters=chapters.where((chapter)=>normalized.isEmpty||normalizeArabic((chapter['title']??'').toString()+' '+(chapter['text']??'').toString()).contains(normalized)).toList();
+  return ListView(controller:readerScrollController,padding:const EdgeInsets.all(16),children:[
+   Text(widget.book.title,textAlign:TextAlign.center,style:const TextStyle(color:green,fontSize:24,fontWeight:FontWeight.bold)),
+   const SizedBox(height:6),Text(widget.book.author,textAlign:TextAlign.center),
+   if(source.isNotEmpty||edition.isNotEmpty)...[
+    const SizedBox(height:14),Container(padding:const EdgeInsets.all(12),decoration:BoxDecoration(color:Colors.white,borderRadius:BorderRadius.circular(12),border:Border.all(color:gold)),child:Text('المصدر: $source\nالطبعة: $edition',style:const TextStyle(height:1.8))),
+   ],
+   const SizedBox(height:14),
+   TextField(controller:searchController,onChanged:(value)=>setState(()=>searchQuery=value),decoration:InputDecoration(hintText:'ابحث داخل فصول الكتاب...',prefixIcon:const Icon(Icons.search,color:green),suffixIcon:searchQuery.isEmpty?null:IconButton(onPressed:(){searchController.clear();setState(()=>searchQuery='');},icon:const Icon(Icons.close)),filled:true,fillColor:Colors.white,border:OutlineInputBorder(borderRadius:BorderRadius.circular(12)))),
+   const SizedBox(height:8),
+   Row(children:[const Text('حجم الخط'),Expanded(child:Slider(min:15,max:30,divisions:10,value:fontSize,onChanged:_saveFontSize)),Text(fontSize.round().toString())]),
+   if(chapters.isEmpty)const Padding(padding:EdgeInsets.all(20),child:Text('لا توجد فصول مضافة لهذا الكتاب بعد.',textAlign:TextAlign.center))
+   else if(visibleChapters.isEmpty)const Padding(padding:EdgeInsets.all(20),child:Text('لا توجد فصول أو مقاطع تطابق عبارة البحث.',textAlign:TextAlign.center))
+   else ...visibleChapters.map((item)=>Card(color:Colors.white,child:ExpansionTile(title:Text(item['title']?.toString()??'فصل',style:const TextStyle(color:green,fontWeight:FontWeight.bold)),children:[Padding(padding:const EdgeInsets.all(16),child:SelectableText(item['text']?.toString()??'',style:TextStyle(fontSize:fontSize,height:2.0)))]))),
+   if(record!['review_note']!=null)Padding(padding:const EdgeInsets.only(top:12),child:Text(record!['review_note'].toString(),style:const TextStyle(color:Colors.brown,height:1.8,fontSize:12))),
+  ]);
+ }
+}
 class _BookMetaRow extends StatelessWidget {
  final String label,value;
  const _BookMetaRow({required this.label,required this.value});
@@ -322,6 +477,27 @@ class _BookMetaRow extends StatelessWidget {
 class Favorites extends StatelessWidget {final Set<String> saved;final Future<void> Function(Book) onToggle;const Favorites({super.key,required this.saved,required this.onToggle});@override Widget build(BuildContext c){final list=catalogBooks.where((b)=>saved.contains(b.title)).toList();return list.isEmpty?const Center(child:Text('لم تضف كتباً إلى مكتبتك بعد.')):ListView(padding:const EdgeInsets.all(12),children:list.map((b)=>BookTile(book:b,saved:true,onSave:()=>onToggle(b))).toList());}}
 class InfoPage extends StatelessWidget {final String title,body;const InfoPage({super.key,required this.title,required this.body});@override Widget build(BuildContext c)=>Directionality(textDirection:TextDirection.rtl,child:Scaffold(appBar:AppBar(title:Text(title)),body:Padding(padding:const EdgeInsets.all(22),child:Text(body,style:const TextStyle(fontSize:17,height:2)))));}
 
+class SectionBanner extends StatelessWidget {
+ final String title;
+ final IconData icon;
+ const SectionBanner({super.key,required this.title,required this.icon});
+ @override Widget build(BuildContext c)=>Container(
+  padding:const EdgeInsets.symmetric(horizontal:16,vertical:17),
+  decoration:BoxDecoration(
+   gradient:const LinearGradient(begin:Alignment.topRight,end:Alignment.bottomLeft,colors:[green,Color(0xFF1D5A46),Color(0xFF0B2B23)]),
+   borderRadius:BorderRadius.circular(18),
+   border:Border.all(color:gold,width:1.2),
+   boxShadow:const [BoxShadow(color:Color(0x18000000),blurRadius:8,offset:Offset(0,3))],
+  ),
+  child:Row(children:[
+   Icon(icon,color:gold,size:34),
+   const SizedBox(width:13),
+   Expanded(child:Text(title,style:const TextStyle(color:Colors.white,fontSize:19,fontWeight:FontWeight.bold))),
+   const Icon(Icons.auto_awesome,color:gold,size:18),
+  ]),
+ );
+}
+
 class NewMuslimPage extends StatelessWidget {
  const NewMuslimPage({super.key});
  static const lessons = <String, String>{
@@ -332,7 +508,7 @@ class NewMuslimPage extends StatelessWidget {
   'قصار السور':'بدء التعلم بسور قصيرة مع الاستماع إلى تلاوة صحيحة وتصحيح النطق.',
  };
  @override Widget build(BuildContext c)=>Directionality(textDirection:TextDirection.rtl,child:ListView(padding:const EdgeInsets.all(16),children:[
-  const Heading('مرحباً بك في طريق العلم'),
+  const SectionBanner(title:'مرحباً بك في طريق العلم',icon:Icons.volunteer_activism),
   const SizedBox(height:8),
   const Text('دروس مرتبة للمسلم الجديد، بلغة سهلة وخطوات متدرجة. ستراجع المواد علمياً قبل نشر الدروس التفصيلية.',style:TextStyle(height:1.9)),
   const SizedBox(height:12),
@@ -348,7 +524,7 @@ class ChildrenPage extends StatelessWidget {
   'آداب المسلم الصغير':['الصدق والأمانة','بر الوالدين','الرفق بالناس','المحافظة على النظافة','إفشاء السلام'],
  };
  @override Widget build(BuildContext c)=>Directionality(textDirection:TextDirection.rtl,child:ListView(padding:const EdgeInsets.all(16),children:[
-  const Heading('براعم نور الهدى'),
+  const SectionBanner(title:'براعم نور الهدى',icon:Icons.child_friendly),
   const SizedBox(height:8),
   const Text('تعلم ممتع ومتدرج للصغار، مع رسومات تعليمية بلا ملامح وجه ظاهرة؛ مثل الشخصيات الظلية أو المرسومة من الخلف.',style:TextStyle(height:1.9)),
   const SizedBox(height:12),
