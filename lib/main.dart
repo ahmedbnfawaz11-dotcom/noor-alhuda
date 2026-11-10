@@ -270,7 +270,14 @@ class _BookDetailsState extends State<BookDetails> {
  double fontSize=17;
  bool noteLoaded=false;
  bool noteSaving=false;
- @override void initState(){super.initState();loadNote();}
+ Future<String>? contentFuture;
+ @override void initState(){
+  super.initState();
+  loadNote();
+  if(widget.book.contentAsset!=null) {
+   contentFuture=rootBundle.loadString(widget.book.contentAsset!);
+  }
+ }
  Future<void> loadNote() async {
   final p=await SharedPreferences.getInstance();
   final value=p.getString('note_${widget.book.key}')??'';
@@ -314,7 +321,7 @@ class _BookDetailsState extends State<BookDetails> {
     const Heading('النص الرقمي المرفق'),
     const SizedBox(height:8),
     FutureBuilder<String>(
-     future:rootBundle.loadString(widget.book.contentAsset!),
+     future:contentFuture,
      builder:(context,snapshot){
       if(snapshot.connectionState!=ConnectionState.done)return const Center(child:CircularProgressIndicator());
       if(snapshot.hasError||!snapshot.hasData)return const Text('تعذر تحميل النص. تحقق من تضمين ملف الكتاب في التطبيق.');
