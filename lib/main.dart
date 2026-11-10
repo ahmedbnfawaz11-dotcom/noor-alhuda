@@ -416,10 +416,10 @@ class HadithLibraryPage extends StatelessWidget {
        return Card(child:ExpansionTile(
         leading:const Icon(Icons.menu_book,color:gold),
         title:Text(h['title']??'حديث',style:const TextStyle(color:green,fontWeight:FontWeight.bold)),
-        subtitle:Text('\${h['source']??''} • \${h['reference']??''}',maxLines:2,overflow:TextOverflow.ellipsis),
+        subtitle:Text('${h['source']??''} • ${h['reference']??''}',maxLines:2,overflow:TextOverflow.ellipsis),
         children:[
          Padding(padding:const EdgeInsets.fromLTRB(16,4,16,16),child:Column(crossAxisAlignment:CrossAxisAlignment.stretch,children:[
-          Text('الصحابي الراوي: \${h['narrator']??'غير محدد'}',style:const TextStyle(fontWeight:FontWeight.bold)),
+          Text('الصحابي الراوي: ${h['narrator']??'غير محدد'}',style:const TextStyle(fontWeight:FontWeight.bold)),
           const SizedBox(height:8),
           if(h['matn']!=null) ...[
            const Text('متن الحديث',style:TextStyle(color:green,fontWeight:FontWeight.bold)),
@@ -433,16 +433,16 @@ class HadithLibraryPage extends StatelessWidget {
           SelectableText(h['isnad_text']??'',style:const TextStyle(height:1.9)),
           const SizedBox(height:8),
           const Text('الرواة بالترتيب',style:TextStyle(color:green,fontWeight:FontWeight.bold)),
-          ...narrators.asMap().entries.map((entry)=>Padding(padding:const EdgeInsets.symmetric(vertical:3),child:Text('\${entry.key+1}. \${entry.value}'))),
+          ...narrators.asMap().entries.map((entry)=>Padding(padding:const EdgeInsets.symmetric(vertical:3),child:Text('${entry.key+1}. ${entry.value}'))),
           if(alternates.isNotEmpty) ...[
            const SizedBox(height:8),
            const Text('طريق بديل مذكور في المصدر',style:TextStyle(color:green,fontWeight:FontWeight.bold)),
-           ...alternates.asMap().entries.map((entry)=>Padding(padding:const EdgeInsets.symmetric(vertical:3),child:Text('\${entry.key+1}. \${entry.value}'))),
+           ...alternates.asMap().entries.map((entry)=>Padding(padding:const EdgeInsets.symmetric(vertical:3),child:Text('${entry.key+1}. ${entry.value}'))),
           ],
           const SizedBox(height:8),
-          Text('الحكم المنقول: \${h['grade']??'لم يدرج'}',style:const TextStyle(fontWeight:FontWeight.bold)),
+          Text('الحكم المنقول: ${h['grade']??'لم يدرج'}',style:const TextStyle(fontWeight:FontWeight.bold)),
           Text(h['verification_note']??'',style:const TextStyle(color:Colors.brown,height:1.8,fontSize:12)),
-          if(h['source_url']!=null) SelectableText('المصدر: \${h['source_url']}',style:const TextStyle(color:green,fontSize:12)),
+          if(h['source_url']!=null) SelectableText('المصدر: ${h['source_url']}',style:const TextStyle(color:green,fontSize:12)),
          ]))
         ],
        ));
