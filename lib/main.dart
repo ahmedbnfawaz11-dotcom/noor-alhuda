@@ -235,7 +235,7 @@ class _BookDetailsState extends State<BookDetails> {
    const SizedBox(height:8),
    Row(children:[
     const Text('حجم الخط'),
-    Expanded(child:Slider(min:14,max:26,divisions:6,value:fontSize,onChanged:(v)=>setState(()=>fontSize=v))),
+    Expanded(child:Slider(min:14,max:26,divisions:6,value:fontSize,onChanged:_saveFontSize)),
     Text(fontSize.round().toString()),
    ]),
    SelectableText(widget.book.summary,style:TextStyle(fontSize:fontSize,height:2.0,color:Colors.black87)),
@@ -267,16 +267,49 @@ class _OfflineReaderPageState extends State<OfflineReaderPage> {
  double fontSize=19;
  String searchQuery='';
  final TextEditingController searchController=TextEditingController();
- @override void initState(){super.initState();loadBook();}
- @override void dispose(){searchController.dispose();super.dispose();}
+ final ScrollController readerScrollController=ScrollController();
+ double lastSavedPosition=0;
+ String get _fontKey=>'reader_font_${widget.book.title}';
+ String get _positionKey=>'reader_position_${widget.book.title}';
+ @override void initState(){super.initState();readerScrollController.addListener(_saveReadingPosition);loadBook();}
+ @override void dispose(){readerScrollController.removeListener(_saveReadingPosition);searchController.dispose();readerScrollController.dispose();super.dispose();}
+ Future<void> _saveReadingPosition() async {
+  if(!readerScrollController.hasClients)return;
+  final position=readerScrollController.position.pixels;
+  if((position-lastSavedPosition).abs()<250)return;
+  lastSavedPosition=position;
+  final prefs=await SharedPreferences.getInstance();
+  await prefs.setDouble(_positionKey,position);
+ }
+ Future<void> _saveFontSize(double value) async {
+  setState(()=>fontSize=value);
+  final prefs=await SharedPreferences.getInstance();
+  await prefs.setDouble(_fontKey,value);
+ }
  Future<void> loadBook() async {
   try {
    final raw=await rootBundle.loadString('assets/books/library.json');
    final decoded=jsonDecode(raw) as Map<String,dynamic>;
    final all=decoded['books'] as Map<String,dynamic>? ?? {};
    final item=all[widget.book.title];
+   final prefs=await SharedPreferences.getInstance();
+   final savedFont=prefs.getDouble(_fontKey);
+   final savedPosition=prefs.getDouble(_positionKey)??0;
    if(!mounted)return;
-   setState((){record=item is Map?Map<String,dynamic>.from(item):null;loading=false;});
+   setState((){
+    record=item is Map?Map<String,dynamic>.from(item):null;
+    if(savedFont!=null)fontSize=savedFont.clamp(15.0,30.0);
+    loading=false;
+   });
+   if(item is Map && savedPosition>0){
+    WidgetsBinding.instance.addPostFrameCallback((_){
+     if(!mounted||!readerScrollController.hasClients)return;
+     final max=readerScrollController.position.maxScrollExtent;
+     final restored=savedPosition.clamp(0.0,max);
+     readerScrollController.jumpTo(restored);
+     lastSavedPosition=restored;
+    });
+   }
   } catch (_) {
    if(!mounted)return;
    setState((){loading=false;error='تعذر تحميل فهرس المحتوى المحلي.';});
@@ -305,7 +338,7 @@ class _OfflineReaderPageState extends State<OfflineReaderPage> {
   final edition=record!['edition']?.toString() ?? '';
   final normalized=normalizeArabic(searchQuery.trim());
   final visibleChapters=chapters.where((chapter)=>normalized.isEmpty||normalizeArabic((chapter['title']??'').toString()+' '+(chapter['text']??'').toString()).contains(normalized)).toList();
-  return ListView(padding:const EdgeInsets.all(16),children:[
+  return ListView(controller:readerScrollController,padding:const EdgeInsets.all(16),children:[
    Text(widget.book.title,textAlign:TextAlign.center,style:const TextStyle(color:green,fontSize:24,fontWeight:FontWeight.bold)),
    const SizedBox(height:6),Text(widget.book.author,textAlign:TextAlign.center),
    if(source.isNotEmpty||edition.isNotEmpty)...[
