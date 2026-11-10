@@ -49,7 +49,11 @@ void main() {
     expect(prefs.getString('note_${books.first.key}'), 'فائدة أراجعها لاحقاً');
   });
 
-  test('book identity includes both title and author', () {\n    expect(books.first.key, '${books.first.title}::${books.first.author}');\n  });\n\n  test('Arabic catalog search normalization ignores diacritics', () {
+  test('book identity includes both title and author', () {
+    expect(books.first.key, '${books.first.title}::${books.first.author}');
+  });
+
+  test('Arabic catalog search normalization ignores diacritics', () {
     expect(
       normalizeArabic('رِيَاضُ الصَّالِحِينَ'),
       normalizeArabic('رياض الصالحين'),
