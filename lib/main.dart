@@ -397,7 +397,7 @@ class _StructuredBookReaderState extends State<StructuredBookReader> {
     source=(book['source']??'').toString();
     edition=(book['edition']??'').toString();
     license=(book['license']??'').toString();
-    selected=saved.clamp(0,rawChapters.length-1);
+    selected=saved.clamp(0,rawChapters.length-1).toInt();
     loading=false;
    });
   } catch (_) { if(mounted)setState(()=>loading=false); }
