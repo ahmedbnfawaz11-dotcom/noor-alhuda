@@ -468,7 +468,8 @@ class _StructuredBookReaderState extends State<StructuredBookReader> {
        Expanded(child:FilledButton.icon(onPressed:selected<chapters.length-1?()=>_select(selected+1):null,icon:const Icon(Icons.arrow_back),label:const Text('الفصل التالي'))),
       ]),
      ],
-    ),
+    ],
+   ),
   ));
  }
 }
