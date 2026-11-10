@@ -376,8 +376,8 @@ class _OfflineReaderPageState extends State<OfflineReaderPage> {
    'assets/books/sahih_muslim_04.json','assets/books/sahih_muslim_05.json','assets/books/sahih_muslim_06.json',
   ],
   'سنن أبي داود':[
-   'assets/books/sunan_abi_dawud_01.json','assets/books/sunan_abi_dawud_02.json','assets/books/sunan_abi_dawud_03.json',
-   'assets/books/sunan_abi_dawud_04.json','assets/books/sunan_abi_dawud_05.json','assets/books/sunan_abi_dawud_06.json',
+   'assets/books/sunan_abudawud_01.json','assets/books/sunan_abudawud_02.json','assets/books/sunan_abudawud_03.json',
+   'assets/books/sunan_abudawud_04.json','assets/books/sunan_abudawud_05.json','assets/books/sunan_abudawud_06.json',
   ],
   'جامع الترمذي':[
    'assets/books/jami_tirmidhi_01.json','assets/books/jami_tirmidhi_02.json','assets/books/jami_tirmidhi_03.json',
@@ -477,7 +477,36 @@ class _OfflineReaderPageState extends State<OfflineReaderPage> {
    Row(children:[const Text('حجم الخط'),Expanded(child:Slider(min:15,max:30,divisions:10,value:fontSize,onChanged:_saveFontSize)),Text(fontSize.round().toString())]),
    if(chapters.isEmpty)const Padding(padding:EdgeInsets.all(20),child:Text('لا توجد فصول مضافة لهذا الكتاب بعد.',textAlign:TextAlign.center))
    else if(visibleChapters.isEmpty)const Padding(padding:EdgeInsets.all(20),child:Text('لا توجد فصول أو مقاطع تطابق عبارة البحث.',textAlign:TextAlign.center))
-   else ...visibleChapters.map((item)=>Card(color:Colors.white,child:ExpansionTile(title:Text(item['title']?.toString()??'فصل',style:const TextStyle(color:green,fontWeight:FontWeight.bold)),children:[Padding(padding:const EdgeInsets.all(16),child:SelectableText(item['text']?.toString()??'',style:TextStyle(fontSize:fontSize,height:2.0)))]))),
+   else ...visibleChapters.map((item){
+    final chapterText=(item['text']??'').toString().trim();
+    final hadithStarts=RegExp(r'\\[رقم الحديث[^\\]]*\\]').allMatches(chapterText).toList();
+    final hasNumberedHadiths=hadithStarts.isNotEmpty;
+    final entries=<String>[];
+    if(hasNumberedHadiths){
+     for(var i=0;i<hadithStarts.length;i++){
+      final start=hadithStarts[i].start;
+      final end=i+1<hadithStarts.length?hadithStarts[i+1].start:chapterText.length;
+      final entry=chapterText.substring(start,end).trim();
+      if(entry.isNotEmpty)entries.add(entry);
+     }
+    }
+    return Card(color:Colors.white,child:ExpansionTile(
+     title:Text(item['title']?.toString()??'فصل',style:const TextStyle(color:green,fontWeight:FontWeight.bold)),
+     subtitle:hasNumberedHadiths?Text('\\${entries.length} رواية — بالسند والمتن كما وردا في المصدر'):null,
+     children:hasNumberedHadiths
+      ?entries.asMap().entries.map((entry)=>Container(
+       margin:const EdgeInsets.fromLTRB(10,5,10,9),
+       padding:const EdgeInsets.all(12),
+       decoration:BoxDecoration(color:const Color(0xFFFFFDF7),borderRadius:BorderRadius.circular(13),border:Border.all(color:gold.withOpacity(.65))),
+       child:Column(crossAxisAlignment:CrossAxisAlignment.stretch,children:[
+        Row(children:[const Icon(Icons.format_quote,color:gold,size:19),const SizedBox(width:6),Expanded(child:Text('السند والمتن • رواية ${entry.key+1}',style:const TextStyle(color:green,fontWeight:FontWeight.bold)))]),
+        const SizedBox(height:8),
+        SelectableText(entry.value,style:TextStyle(fontSize:fontSize,height:2.0)),
+       ]),
+      )).toList()
+      :[Padding(padding:const EdgeInsets.all(16),child:SelectableText(chapterText,style:TextStyle(fontSize:fontSize,height:2.0)))],
+    ));
+   }),
    if(record!['review_note']!=null)Padding(padding:const EdgeInsets.only(top:12),child:Text(record!['review_note'].toString(),style:const TextStyle(color:Colors.brown,height:1.8,fontSize:12))),
   ]);
  }
