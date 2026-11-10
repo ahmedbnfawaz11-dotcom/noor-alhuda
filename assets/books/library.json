@@ -1,0 +1,10 @@
+{
+  "schema_version": 1,
+  "language": "ar",
+  "books": {},
+  "policy": {
+    "include_only_verified_texts": true,
+    "require_edition_and_source_metadata": true,
+    "require_redistribution_permission": true
+  }
+}
