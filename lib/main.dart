@@ -306,6 +306,10 @@ class _OfflineReaderPageState extends State<OfflineReaderPage> {
    'assets/books/jami_tirmidhi_01.json','assets/books/jami_tirmidhi_02.json','assets/books/jami_tirmidhi_03.json',
    'assets/books/jami_tirmidhi_04.json','assets/books/jami_tirmidhi_05.json','assets/books/jami_tirmidhi_06.json',
   ],
+  'سنن النسائي':[
+   'assets/books/sunan_nasai_01.json','assets/books/sunan_nasai_02.json','assets/books/sunan_nasai_03.json',
+   'assets/books/sunan_nasai_04.json','assets/books/sunan_nasai_05.json','assets/books/sunan_nasai_06.json',
+  ],
   'سنن ابن ماجه':[
    'assets/books/sunan_ibn_majah_01.json',
    'assets/books/sunan_ibn_majah_02.json',
