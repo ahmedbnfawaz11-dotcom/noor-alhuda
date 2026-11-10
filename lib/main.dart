@@ -1,4 +1,6 @@
+import 'dart:convert';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 const green = Color(0xFF123B30), gold = Color(0xFFC6A45C), paper = Color(0xFFF6F0E4);
@@ -239,7 +241,9 @@ class _BookDetailsState extends State<BookDetails> {
    SelectableText(widget.book.summary,style:TextStyle(fontSize:fontSize,height:2.0,color:Colors.black87)),
    const SizedBox(height:18),
    FilledButton.icon(onPressed:widget.onSave,icon:Icon(widget.saved?Icons.bookmark:Icons.bookmark_add_outlined),label:Text(widget.saved?'إزالة من مكتبتي':'أضف إلى مكتبتي')),
-   const SizedBox(height:20),
+   const SizedBox(height:18),
+   FilledButton.icon(onPressed:()=>Navigator.push(c,MaterialPageRoute(builder:(_)=>OfflineReaderPage(book:widget.book))),icon:const Icon(Icons.chrome_reader_mode_outlined),label:const Text('فتح قارئ الكتاب'),style:FilledButton.styleFrom(minimumSize:const Size(double.infinity,50))),
+   const SizedBox(height:18),
    const Heading('ملاحظاتي الخاصة'),
    const SizedBox(height:8),
    TextField(controller:noteController,minLines:3,maxLines:7,decoration:InputDecoration(hintText:'اكتب فوائدك أو ملاحظاتك حول هذا الكتاب...',filled:true,fillColor:Colors.white,border:OutlineInputBorder(borderRadius:BorderRadius.circular(12)))),
@@ -249,6 +253,69 @@ class _BookDetailsState extends State<BookDetails> {
    Container(padding:const EdgeInsets.all(14),decoration:BoxDecoration(color:const Color(0xFFFFF4DD),borderRadius:BorderRadius.circular(12),border:Border.all(color:gold)),child:const Text('تنبيه علمي: هذه الصفحة تعرض بيانات الفهرس والنبذة فقط. النص الكامل للكتاب غير مرفق في هذه النسخة. لن ننسب نصوصاً إلى مؤلفيها قبل التحقق من النسخة والطبعة والمصدر وحقوق الإتاحة.',style:TextStyle(color:Colors.brown,height:1.9))),
   ]),
  ));
+}
+
+class OfflineReaderPage extends StatefulWidget {
+ final Book book;
+ const OfflineReaderPage({super.key,required this.book});
+ @override State<OfflineReaderPage> createState()=>_OfflineReaderPageState();
+}
+class _OfflineReaderPageState extends State<OfflineReaderPage> {
+ Map<String,dynamic>? record;
+ bool loading=true;
+ String? error;
+ double fontSize=19;
+ @override void initState(){super.initState();loadBook();}
+ Future<void> loadBook() async {
+  try {
+   final raw=await rootBundle.loadString('assets/books/library.json');
+   final decoded=jsonDecode(raw) as Map<String,dynamic>;
+   final all=decoded['books'] as Map<String,dynamic>? ?? {};
+   final item=all[widget.book.title];
+   if(!mounted)return;
+   setState((){record=item is Map?Map<String,dynamic>.from(item):null;loading=false;});
+  } catch (_) {
+   if(!mounted)return;
+   setState((){loading=false;error='تعذر تحميل فهرس المحتوى المحلي.';});
+  }
+ }
+ @override Widget build(BuildContext context)=>Directionality(textDirection:TextDirection.rtl,child:Scaffold(
+  appBar:AppBar(title:const Text('قارئ الكتب')),
+  body:loading?const Center(child:CircularProgressIndicator()):error!=null
+   ?Center(child:Padding(padding:const EdgeInsets.all(24),child:Text(error!,textAlign:TextAlign.center)))
+   :record==null?_emptyState():_readerContent(),
+ ));
+ Widget _emptyState()=>ListView(padding:const EdgeInsets.all(22),children:[
+  const SizedBox(height:24),const Icon(Icons.menu_book_outlined,color:gold,size:68),const SizedBox(height:18),
+  Text(widget.book.title,textAlign:TextAlign.center,style:const TextStyle(color:green,fontSize:24,fontWeight:FontWeight.bold)),
+  const SizedBox(height:10),Text(widget.book.author,textAlign:TextAlign.center),const SizedBox(height:24),
+  Container(padding:const EdgeInsets.all(18),decoration:BoxDecoration(color:const Color(0xFFFFF4DD),borderRadius:BorderRadius.circular(14),border:Border.all(color:gold)),child:const Column(children:[
+   Icon(Icons.library_books_outlined,color:green,size:32),SizedBox(height:10),
+   Text('النص الكامل لهذا الكتاب غير متاح داخل النسخة الحالية',textAlign:TextAlign.center,style:TextStyle(fontWeight:FontWeight.bold,color:green,fontSize:17)),
+   SizedBox(height:8),
+   Text('أُعدّ القارئ للعمل دون إنترنت، وسيظهر النص هنا بعد إضافة نسخة موثوقة موثقة المصدر والطبعة ومسموح بإعادة توزيعها. لم نضع نصاً تجريبياً أو منسوباً للمؤلف بغير تحقق.',textAlign:TextAlign.center,style:TextStyle(height:1.9)),
+  ])),
+ ]);
+ Widget _readerContent(){
+  final chapters=record!['chapters'] as List<dynamic>? ?? [];
+  final source=record!['source']?.toString() ?? '';
+  final edition=record!['edition']?.toString() ?? '';
+  return ListView(padding:const EdgeInsets.all(16),children:[
+   Text(widget.book.title,textAlign:TextAlign.center,style:const TextStyle(color:green,fontSize:24,fontWeight:FontWeight.bold)),
+   const SizedBox(height:6),Text(widget.book.author,textAlign:TextAlign.center),
+   if(source.isNotEmpty||edition.isNotEmpty)...[
+    const SizedBox(height:14),Container(padding:const EdgeInsets.all(12),decoration:BoxDecoration(color:Colors.white,borderRadius:BorderRadius.circular(12),border:Border.all(color:gold)),child:Text('المصدر: $source\nالطبعة: $edition',style:const TextStyle(height:1.8))),
+   ],
+   const SizedBox(height:14),
+   Row(children:[const Text('حجم الخط'),Expanded(child:Slider(min:15,max:30,divisions:10,value:fontSize,onChanged:(v)=>setState(()=>fontSize=v))),Text(fontSize.round().toString())]),
+   if(chapters.isEmpty)const Padding(padding:EdgeInsets.all(20),child:Text('لا توجد فصول مضافة لهذا الكتاب بعد.',textAlign:TextAlign.center))
+   else ...chapters.map((chapter){
+    final item=Map<String,dynamic>.from(chapter as Map);
+    return Card(color:Colors.white,child:ExpansionTile(title:Text(item['title']?.toString()??'فصل',style:const TextStyle(color:green,fontWeight:FontWeight.bold)),children:[Padding(padding:const EdgeInsets.all(16),child:SelectableText(item['text']?.toString()??'',style:TextStyle(fontSize:fontSize,height:2.0)))]));
+   }),
+   if(record!['review_note']!=null)Padding(padding:const EdgeInsets.only(top:12),child:Text(record!['review_note'].toString(),style:const TextStyle(color:Colors.brown,height:1.8,fontSize:12))),
+  ]);
+ }
 }
 
 class _BookMetaRow extends StatelessWidget {
