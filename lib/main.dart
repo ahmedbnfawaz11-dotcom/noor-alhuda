@@ -205,7 +205,7 @@ class _HomeState extends State<HomePage> {
  @override Widget build(BuildContext c){
  final normalizedQuery=normalizeArabic(query.trim()); final matches=catalogBooks.where((b)=>normalizeArabic(b.title+' '+b.author+' '+b.category+' '+b.summary).contains(normalizedQuery)).toList();
  return Directionality(textDirection:TextDirection.rtl,child:Scaffold(appBar:AppBar(title:const Column(children:[Text('نور الهدى',style:TextStyle(fontWeight:FontWeight.bold)),Text('الموسوعة الإسلامية',style:TextStyle(fontSize:11,color:Color(0xFFE8D9B7)))])),
- drawer:Drawer(child:Column(children:[Container(width:double.infinity,padding:const EdgeInsets.fromLTRB(20,55,20,25),color:green,child:const Column(children:[Icon(Icons.menu_book,color:gold,size:45),Text('نور الهدى',style:TextStyle(color:Colors.white,fontSize:25,fontWeight:FontWeight.bold))])),ListTile(leading:const Icon(Icons.home),title:const Text('الرئيسية'),onTap:(){Navigator.pop(c);setState(()=>tab=0);}),ListTile(leading:const Icon(Icons.bookmark_outline),title:const Text('مكتبتي الخاصة'),onTap:(){Navigator.pop(c);setState(()=>tab=1);}),ListTile(leading:const Icon(Icons.person_outline),title:const Text('المسلمون الجدد'),onTap:(){Navigator.pop(c);setState(()=>tab=2);}),ListTile(leading:const Icon(Icons.child_care),title:const Text('قسم الأطفال'),onTap:(){Navigator.pop(c);setState(()=>tab=3);}),ListTile(leading:const Icon(Icons.collections_bookmark_outlined),title:const Text('كتب أهل السنة والجماعة'),onTap:(){Navigator.pop(c);Navigator.push(c,MaterialPageRoute(builder:(_)=>SunniBooksPage(saved:saved,onToggle:toggle)));}),ListTile(leading:const Icon(Icons.info_outline),title:const Text('حول الموسوعة ومصادرها'),onTap:(){Navigator.pop(c);Navigator.push(c,MaterialPageRoute(builder:(_)=>const InfoPage(title:'حول نور الهدى',body:'نور الهدى موسوعة إسلامية تهدف إلى تسهيل الوصول إلى فهارس الكتب والمواد العلمية الموثوقة.\n\nلا يُدرج نص كتاب كامل إلا بعد التحقق من مصدر النسخة وبيانات الطبعة والمحقق وحقوق إعادة التوزيع.\n\nقد تظهر بعض الكتب في الفهرس ببيانات تعريفية فقط إلى حين توفير نص رقمي موثوق ومسموح بإتاحته دون اتصال.\n\nنسأل الله أن يجعل هذا العمل خالصاً نافعاً.')));})])),
+ drawer:Drawer(child:Column(children:[Container(width:double.infinity,padding:const EdgeInsets.fromLTRB(20,55,20,25),color:green,child:const Column(children:[Icon(Icons.menu_book,color:gold,size:45),Text('نور الهدى',style:TextStyle(color:Colors.white,fontSize:25,fontWeight:FontWeight.bold))])),ListTile(leading:const Icon(Icons.home),title:const Text('الرئيسية'),onTap:(){Navigator.pop(c);setState(()=>tab=0);}),ListTile(leading:const Icon(Icons.bookmark_outline),title:const Text('مكتبتي الخاصة'),onTap:(){Navigator.pop(c);setState(()=>tab=1);}),ListTile(leading:const Icon(Icons.person_outline),title:const Text('المسلمون الجدد'),onTap:(){Navigator.pop(c);setState(()=>tab=2);}),ListTile(leading:const Icon(Icons.child_care),title:const Text('قسم الأطفال'),onTap:(){Navigator.pop(c);setState(()=>tab=3);}),ListTile(leading:const Icon(Icons.collections_bookmark_outlined),title:const Text('كتب أهل السنة والجماعة'),onTap:(){Navigator.pop(c);Navigator.push(c,MaterialPageRoute(builder:(_)=>SunniBooksPage(saved:saved,onToggle:toggle)));}),ListTile(leading:const Icon(Icons.library_books_outlined),title:const Text('الأحاديث والأسانيد'),onTap:(){Navigator.pop(c);Navigator.push(c,MaterialPageRoute(builder:(_)=>const HadithLibraryPage()));}),ListTile(leading:const Icon(Icons.info_outline),title:const Text('حول الموسوعة ومصادرها'),onTap:(){Navigator.pop(c);Navigator.push(c,MaterialPageRoute(builder:(_)=>const InfoPage(title:'حول نور الهدى',body:'نور الهدى موسوعة إسلامية تهدف إلى تسهيل الوصول إلى فهارس الكتب والمواد العلمية الموثوقة.\n\nلا يُدرج نص كتاب كامل إلا بعد التحقق من مصدر النسخة وبيانات الطبعة والمحقق وحقوق إعادة التوزيع.\n\nقد تظهر بعض الكتب في الفهرس ببيانات تعريفية فقط إلى حين توفير نص رقمي موثوق ومسموح بإتاحته دون اتصال.\n\nنسأل الله أن يجعل هذا العمل خالصاً نافعاً.')));})])),
  body:tab==1?Favorites(saved:saved,onToggle:toggle):tab==2?const NewMuslimPage():tab==3?const ChildrenPage():ListView(padding:const EdgeInsets.all(16),children:[
  Container(padding:const EdgeInsets.all(18),decoration:BoxDecoration(gradient:const LinearGradient(colors:[green,Color(0xFF1D5A46)]),borderRadius:BorderRadius.circular(22),border:Border.all(color:gold)),child:Column(crossAxisAlignment:CrossAxisAlignment.start,children:[const Text('﴿ وَقُل رَّبِّ زِدْنِي عِلْمًا ﴾',style:TextStyle(color:gold,fontSize:23,fontWeight:FontWeight.bold)),const SizedBox(height:7),const Text('بوابتك إلى مصادر العلم والتراث الإسلامي',style:TextStyle(color:Colors.white)),const SizedBox(height:15),TextField(onChanged:(v)=>setState(()=>query=v),decoration:InputDecoration(hintText:'ابحث عن كتاب أو مؤلف أو قسم...',prefixIcon:const Icon(Icons.search,color:green),filled:true,fillColor:paper,border:OutlineInputBorder(borderRadius:BorderRadius.circular(14),borderSide:BorderSide.none)))])),
  const SizedBox(height:20),const Heading('أقسام الموسوعة'),const SizedBox(height:10),
@@ -394,6 +394,68 @@ class _BookMetaRow extends StatelessWidget {
 }
 
 class Favorites extends StatelessWidget {final Set<String> saved;final Future<void> Function(Book) onToggle;const Favorites({super.key,required this.saved,required this.onToggle});@override Widget build(BuildContext c){final list=catalogBooks.where((b)=>saved.contains(b.key)).toList();return list.isEmpty?const Center(child:Text('لم تضف كتباً إلى مكتبتك بعد.')):ListView(padding:const EdgeInsets.all(12),children:list.map((b)=>BookTile(book:b,saved:true,onSave:()=>onToggle(b))).toList());}}
+class HadithLibraryPage extends StatelessWidget {
+ const HadithLibraryPage({super.key});
+ @override Widget build(BuildContext context)=>Directionality(textDirection:TextDirection.rtl,child:Scaffold(
+  appBar:AppBar(title:const Text('الأحاديث والأسانيد')),
+  body:FutureBuilder<String>(
+   future:rootBundle.loadString('assets/hadith/hadiths.json'),
+   builder:(context,snapshot){
+    if(snapshot.connectionState!=ConnectionState.done)return const Center(child:CircularProgressIndicator());
+    if(snapshot.hasError||!snapshot.hasData)return const Center(child:Text('تعذر تحميل قاعدة الأحاديث.'));
+    try {
+     final data=jsonDecode(snapshot.data!) as Map<String,dynamic>;
+     final items=data['hadiths'] as List<dynamic>;
+     return ListView(padding:const EdgeInsets.all(14),children:[
+      Container(padding:const EdgeInsets.all(14),decoration:BoxDecoration(color:green,borderRadius:BorderRadius.circular(14),border:Border.all(color:gold)),child:Text(data['note']??'',style:const TextStyle(color:Colors.white,height:1.8))),
+      const SizedBox(height:10),
+      ...items.map((raw){
+       final h=raw as Map<String,dynamic>;
+       final narrators=(h['narrators'] as List<dynamic>? ?? []);
+       final alternates=(h['alternate_routes'] as List<dynamic>? ?? []);
+       return Card(child:ExpansionTile(
+        leading:const Icon(Icons.menu_book,color:gold),
+        title:Text(h['title']??'حديث',style:const TextStyle(color:green,fontWeight:FontWeight.bold)),
+        subtitle:Text('\${h['source']??''} • \${h['reference']??''}',maxLines:2,overflow:TextOverflow.ellipsis),
+        children:[
+         Padding(padding:const EdgeInsets.fromLTRB(16,4,16,16),child:Column(crossAxisAlignment:CrossAxisAlignment.stretch,children:[
+          Text('الصحابي الراوي: \${h['narrator']??'غير محدد'}',style:const TextStyle(fontWeight:FontWeight.bold)),
+          const SizedBox(height:8),
+          if(h['matn']!=null) ...[
+           const Text('متن الحديث',style:TextStyle(color:green,fontWeight:FontWeight.bold)),
+           SelectableText(h['matn'],style:const TextStyle(height:2,fontSize:17)),
+          ] else if(h['matn_summary']!=null) ...[
+           const Text('ملخص تعريفي — ليس المتن الكامل',style:TextStyle(color:Colors.brown,fontWeight:FontWeight.bold)),
+           Text(h['matn_summary'],style:const TextStyle(height:1.9)),
+          ],
+          const SizedBox(height:10),
+          const Text('نص الإسناد المحفوظ',style:TextStyle(color:green,fontWeight:FontWeight.bold)),
+          SelectableText(h['isnad_text']??'',style:const TextStyle(height:1.9)),
+          const SizedBox(height:8),
+          const Text('الرواة بالترتيب',style:TextStyle(color:green,fontWeight:FontWeight.bold)),
+          ...narrators.asMap().entries.map((entry)=>Padding(padding:const EdgeInsets.symmetric(vertical:3),child:Text('\${entry.key+1}. \${entry.value}'))),
+          if(alternates.isNotEmpty) ...[
+           const SizedBox(height:8),
+           const Text('طريق بديل مذكور في المصدر',style:TextStyle(color:green,fontWeight:FontWeight.bold)),
+           ...alternates.asMap().entries.map((entry)=>Padding(padding:const EdgeInsets.symmetric(vertical:3),child:Text('\${entry.key+1}. \${entry.value}'))),
+          ],
+          const SizedBox(height:8),
+          Text('الحكم المنقول: \${h['grade']??'لم يدرج'}',style:const TextStyle(fontWeight:FontWeight.bold)),
+          Text(h['verification_note']??'',style:const TextStyle(color:Colors.brown,height:1.8,fontSize:12)),
+          if(h['source_url']!=null) SelectableText('المصدر: \${h['source_url']}',style:const TextStyle(color:green,fontSize:12)),
+         ]))
+        ],
+       ));
+      }),
+     ]);
+    } catch (_) {
+     return const Center(child:Text('تعذر قراءة تنسيق قاعدة الأحاديث؛ يلزم فحص ملف البيانات.'));
+    }
+   },
+  ),
+ ));
+}
+
 class InfoPage extends StatelessWidget {final String title,body;const InfoPage({super.key,required this.title,required this.body});@override Widget build(BuildContext c)=>Directionality(textDirection:TextDirection.rtl,child:Scaffold(appBar:AppBar(title:Text(title)),body:Padding(padding:const EdgeInsets.all(22),child:Text(body,style:const TextStyle(fontSize:17,height:2)))));}
 
 class NewMuslimPage extends StatelessWidget {
