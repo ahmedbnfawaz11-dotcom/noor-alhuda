@@ -304,7 +304,7 @@ class _OfflineReaderPageState extends State<OfflineReaderPage> {
   final source=record!['source']?.toString() ?? '';
   final edition=record!['edition']?.toString() ?? '';
   final normalized=normalizeArabic(searchQuery.trim());
-  final visibleChapters=chapters.where((chapter)=>normalized.isEmpty||normalizeArabic('\${chapter['title']??''} \${chapter['text']??''}').contains(normalized)).toList();
+  final visibleChapters=chapters.where((chapter)=>normalized.isEmpty||normalizeArabic((chapter['title']??'').toString()+' '+(chapter['text']??'').toString()).contains(normalized)).toList();
   return ListView(padding:const EdgeInsets.all(16),children:[
    Text(widget.book.title,textAlign:TextAlign.center,style:const TextStyle(color:green,fontSize:24,fontWeight:FontWeight.bold)),
    const SizedBox(height:6),Text(widget.book.author,textAlign:TextAlign.center),
