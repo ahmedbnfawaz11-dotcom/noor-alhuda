@@ -2,6 +2,7 @@ import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:pdfrx/pdfrx.dart';
 
 const green = Color(0xFF123B30), gold = Color(0xFFC6A45C), paper = Color(0xFFF6F0E4);
 const books = <Book>[
@@ -161,7 +162,7 @@ String normalizeArabic(String value) => value
  .replaceAll('آ','ا')
  .replaceAll('ى','ي');
 
-class Book { final String title,author,category,summary; const Book(this.title,this.author,this.category,this.summary); }
+class Book { final String title,author,category,summary; final String? pdfAsset; const Book(this.title,this.author,this.category,this.summary,{this.pdfAsset}); }
 const categories=['القرآن وعلومه','الحديث الشريف','العقيدة والتوحيد','الفقه والحديث','السيرة والشمائل','أصول الفقه','الحديث والآداب','الأذكار والرقائق','علوم اللغة العربية','كتب أهل السنة والجماعة','التاريخ والتراجم','المسلمون الجدد','قسم الأطفال'];
 
 Future<void> main() async { WidgetsFlutterBinding.ensureInitialized(); final p=await SharedPreferences.getInstance(); runApp(NoorApp(firstRun:!(p.getBool('seen_intro')??false))); }
@@ -331,6 +332,15 @@ class _BookDetailsState extends State<BookDetails> {
     const Text('المصدر الرقمي: OpenITI، والترخيص CC BY-NC-SA 4.0. هذه النسخة تحتاج إلى مقابلة على الطبعة المطبوعة، ولا يجوز استخدامها تجارياً دون إذن مستقل.',style:TextStyle(color:Colors.brown,fontSize:12,height:1.8)),
    ],
    const SizedBox(height:18),
+   if(widget.book.pdfAsset!=null) ...[
+    const SizedBox(height:18),
+    FilledButton.icon(
+     onPressed:()=>Navigator.push(c,MaterialPageRoute(builder:(_)=>InAppPdfReader(title:widget.book.title,assetPath:widget.book.pdfAsset!))),
+     icon:const Icon(Icons.picture_as_pdf),
+     label:const Text('اقرأ الكتاب داخل نور الهدى'),
+     style:FilledButton.styleFrom(backgroundColor:green,foregroundColor:gold),
+    ),
+   ],
    FilledButton.icon(onPressed:widget.onSave,icon:Icon(widget.saved?Icons.bookmark:Icons.bookmark_add_outlined),label:Text(widget.saved?'إزالة من مكتبتي':'أضف إلى مكتبتي')),
    const SizedBox(height:20),
    const Heading('ملاحظاتي الخاصة'),
@@ -411,4 +421,18 @@ class ChildrenPage extends StatelessWidget {
   const SizedBox(height:12),
   ...activities.entries.map((e)=>Card(child:ExpansionTile(leading:const Icon(Icons.auto_stories,color:gold),title:Text(e.key,style:const TextStyle(color:green,fontWeight:FontWeight.bold)),children:e.value.asMap().entries.map((step)=>ListTile(leading:CircleAvatar(backgroundColor:green,foregroundColor:gold,child:Text('${step.key+1}')),title:Text(step.value))).toList()))),
  ]));
+}
+
+
+/// قارئ PDF مدمج: يعرض المستند داخل التطبيق ولا يرسله إلى مشغل خارجي.
+class InAppPdfReader extends StatelessWidget {
+ final String title;
+ final String? assetPath;
+ final String? filePath;
+ const InAppPdfReader({super.key,required this.title,this.assetPath,this.filePath}) : assert(assetPath!=null||filePath!=null);
+ @override Widget build(BuildContext context)=>Directionality(textDirection:TextDirection.rtl,child:Scaffold(
+  appBar:AppBar(title:Text(title),actions:[const Padding(padding:EdgeInsets.symmetric(horizontal:12),child:Center(child:Text('نور الهدى',style:TextStyle(color:gold,fontSize:12))))]),
+  backgroundColor:paper,
+  body:Container(margin:const EdgeInsets.all(8),decoration:BoxDecoration(color:Colors.white,border:Border.all(color:gold,width:1.4),borderRadius:BorderRadius.circular(10)),clipBehavior:Clip.antiAlias,child:assetPath!=null?PdfViewer.asset(assetPath!):PdfViewer.file(filePath!)),
+ ));
 }
