@@ -51,9 +51,7 @@ void main() {
 
   testWidgets('offline reader clearly reports when verified book text is absent', (tester) async {
     await tester.pumpWidget(MaterialApp(home: OfflineReaderPage(book: const Book('كتاب غير مدرج للاختبار','مؤلف غير محدد','اختبار',''))));
-    await tester.runAsync(() async {
-      await Future<void>.delayed(const Duration(milliseconds: 300));
-    });
+    await tester.pump(const Duration(milliseconds: 500));
     await tester.pump();
 
     expect(find.text('قارئ الكتب'), findsOneWidget);
