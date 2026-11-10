@@ -156,6 +156,7 @@ String normalizeArabic(String value) => value
 
 class Book { final String title,author,category,summary; const Book(this.title,this.author,this.category,this.summary); }
 const categories=['القرآن وعلومه','الحديث الشريف','العقيدة والتوحيد','الفقه والحديث','السيرة والشمائل','أصول الفقه','الحديث والآداب','الأذكار والرقائق','علوم اللغة العربية','كتب أهل السنة والجماعة','التاريخ والتراجم','المسلمون الجدد','قسم الأطفال'];
+const categoryIcons=<IconData>[Icons.menu_book_rounded,Icons.auto_stories,Icons.mosque,Icons.balance,Icons.history_edu,Icons.account_balance,Icons.library_books,Icons.favorite,Icons.translate,Icons.collections_bookmark,Icons.history,Icons.volunteer_activism,Icons.child_friendly];
 
 Future<void> main() async { WidgetsFlutterBinding.ensureInitialized(); final p=await SharedPreferences.getInstance(); runApp(NoorApp(firstRun:!(p.getBool('seen_intro')??false))); }
 class NoorApp extends StatelessWidget { final bool firstRun; const NoorApp({super.key,required this.firstRun}); @override Widget build(BuildContext c)=>MaterialApp(title:'نور الهدى',debugShowCheckedModeBanner:false,theme:ThemeData(useMaterial3:true,scaffoldBackgroundColor:paper,colorScheme:ColorScheme.fromSeed(seedColor:green,primary:green,secondary:gold),appBarTheme:const AppBarTheme(backgroundColor:green,foregroundColor:Colors.white,centerTitle:true)),home:LaunchPage(firstRun:firstRun)); }
@@ -201,7 +202,7 @@ class _HomeState extends State<HomePage> {
  body:tab==1?Favorites(saved:saved,onToggle:toggle):tab==2?const NewMuslimPage():tab==3?const ChildrenPage():ListView(padding:const EdgeInsets.all(16),children:[
  Container(padding:const EdgeInsets.all(18),decoration:BoxDecoration(gradient:const LinearGradient(colors:[green,Color(0xFF1D5A46)]),borderRadius:BorderRadius.circular(22),border:Border.all(color:gold)),child:Column(crossAxisAlignment:CrossAxisAlignment.start,children:[const Text('﴿ وَقُل رَّبِّ زِدْنِي عِلْمًا ﴾',style:TextStyle(color:gold,fontSize:23,fontWeight:FontWeight.bold)),const SizedBox(height:7),const Text('بوابتك إلى مصادر العلم والتراث الإسلامي',style:TextStyle(color:Colors.white)),const SizedBox(height:15),TextField(onChanged:(v)=>setState(()=>query=v),decoration:InputDecoration(hintText:'ابحث عن كتاب أو مؤلف أو قسم...',prefixIcon:const Icon(Icons.search,color:green),filled:true,fillColor:paper,border:OutlineInputBorder(borderRadius:BorderRadius.circular(14),borderSide:BorderSide.none)))])),
  const SizedBox(height:20),const Heading('أقسام الموسوعة'),const SizedBox(height:10),
- GridView.builder(shrinkWrap:true,physics:const NeverScrollableScrollPhysics(),itemCount:categories.length,gridDelegate:const SliverGridDelegateWithFixedCrossAxisCount(crossAxisCount:2,mainAxisSpacing:9,crossAxisSpacing:9,childAspectRatio:2.05),itemBuilder:(ctx,i)=>InkWell(onTap:()=>Navigator.push(ctx,MaterialPageRoute(builder:(_)=>CategoryPage(category:categories[i],saved:saved,onToggle:toggle))),child:Container(decoration:BoxDecoration(color:Colors.white,borderRadius:BorderRadius.circular(14),border:Border.all(color:const Color(0xFFDDCBA7))),child:Center(child:Text(categories[i],textAlign:TextAlign.center,style:const TextStyle(color:green,fontWeight:FontWeight.bold)))))),
+ GridView.builder(shrinkWrap:true,physics:const NeverScrollableScrollPhysics(),itemCount:categories.length,gridDelegate:const SliverGridDelegateWithFixedCrossAxisCount(crossAxisCount:2,mainAxisSpacing:9,crossAxisSpacing:9,childAspectRatio:2.05),itemBuilder:(ctx,i)=>InkWell(onTap:()=>Navigator.push(ctx,MaterialPageRoute(builder:(_)=>CategoryPage(category:categories[i],saved:saved,onToggle:toggle))),child:Container(padding:const EdgeInsets.symmetric(horizontal:8,vertical:7),decoration:BoxDecoration(gradient:const LinearGradient(begin:Alignment.topRight,end:Alignment.bottomLeft,colors:[Colors.white,Color(0xFFF4EEDC)]),borderRadius:BorderRadius.circular(15),border:Border.all(color:const Color(0xFFC6A45C),width:1.05),boxShadow:const [BoxShadow(color:Color(0x12000000),blurRadius:5,offset:Offset(0,2))]),child:Column(mainAxisAlignment:MainAxisAlignment.center,children:[Icon(categoryIcons[i],color:gold,size:25),const SizedBox(height:5),Text(categories[i],textAlign:TextAlign.center,maxLines:2,overflow:TextOverflow.ellipsis,style:const TextStyle(color:green,fontWeight:FontWeight.bold,fontSize:12.5))])))),
  const SizedBox(height:20),Heading(query.isEmpty?'كتب مقترحة للفهرسة':'نتائج البحث'),
  if(matches.isEmpty)const Padding(padding:EdgeInsets.all(20),child:Text('لا توجد نتائج مطابقة.',textAlign:TextAlign.center))else ...matches.map((b)=>BookTile(book:b,saved:saved.contains(b.title),onSave:()=>toggle(b))),
  const SizedBox(height:10),const Text('تنبيه: هذه نسخة تأسيسية للفهرس والتصميم. النصوص الكاملة تحتاج إلى إدراج نسخ رقمية موثوقة ومراجعة بياناتها قبل إتاحتها.',style:TextStyle(color:Colors.brown,fontSize:12,height:1.7))
@@ -210,7 +211,7 @@ class _HomeState extends State<HomePage> {
  ));
  }
 }
-class Heading extends StatelessWidget {final String title;const Heading(this.title,{super.key});@override Widget build(BuildContext c)=>Row(children:[Container(width:4,height:22,color:gold),const SizedBox(width:9),Text(title,style:const TextStyle(color:green,fontSize:18,fontWeight:FontWeight.bold))]);}
+class Heading extends StatelessWidget {final String title;const Heading(this.title,{super.key});@override Widget build(BuildContext c)=>Row(children:[Container(width:4,height:22,decoration:BoxDecoration(color:gold,borderRadius:BorderRadius.circular(4))),const SizedBox(width:9),Text(title,style:const TextStyle(color:green,fontSize:18,fontWeight:FontWeight.bold)),const SizedBox(width:8),const Icon(Icons.auto_awesome,color:gold,size:15),const SizedBox(width:5),const Expanded(child:Divider(color:Color(0xFFDCC99E),thickness:1))]);}
 class BookTile extends StatelessWidget {
  final Book book;final bool saved;final VoidCallback onSave;const BookTile({super.key,required this.book,required this.saved,required this.onSave});
  @override Widget build(BuildContext c)=>Card(color:Colors.white,elevation:0,margin:const EdgeInsets.symmetric(vertical:5),shape:RoundedRectangleBorder(borderRadius:BorderRadius.circular(14),side:const BorderSide(color:Color(0xFFDDCBA7))),child:ListTile(leading:Container(width:42,height:48,decoration:BoxDecoration(color:green,borderRadius:BorderRadius.circular(8)),child:const Icon(Icons.menu_book,color:gold)),title:Text(book.title,style:const TextStyle(color:green,fontWeight:FontWeight.bold)),subtitle:Text(book.author+'\n'+book.category,maxLines:2,overflow:TextOverflow.ellipsis),trailing:IconButton(onPressed:onSave,icon:Icon(saved?Icons.bookmark:Icons.bookmark_border,color:gold)),onTap:()=>Navigator.push(c,MaterialPageRoute(builder:(_)=>BookDetails(book:book,saved:saved,onSave:onSave)))));
@@ -370,8 +371,9 @@ class _OfflineReaderPageState extends State<OfflineReaderPage> {
    'assets/books/sunan_nasai_04.json','assets/books/sunan_nasai_05.json','assets/books/sunan_nasai_06.json',
   ],
   'سنن ابن ماجه':[
-   'assets/books/sunan_ibnmajah_01.json','assets/books/sunan_ibnmajah_02.json',
-   'assets/books/sunan_ibnmajah_03.json','assets/books/sunan_ibnmajah_04.json',
+   'assets/books/sunan_ibn_majah_01.json','assets/books/sunan_ibn_majah_02.json',
+   'assets/books/sunan_ibn_majah_03.json','assets/books/sunan_ibn_majah_04.json',
+   'assets/books/sunan_ibn_majah_05.json',
   ],
  };
  static final Map<String,Future<Map<String,dynamic>>> _bookCache={};
