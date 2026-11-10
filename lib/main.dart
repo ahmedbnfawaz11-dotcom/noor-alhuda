@@ -265,7 +265,10 @@ class _OfflineReaderPageState extends State<OfflineReaderPage> {
  bool loading=true;
  String? error;
  double fontSize=19;
+ String searchQuery='';
+ final TextEditingController searchController=TextEditingController();
  @override void initState(){super.initState();loadBook();}
+ @override void dispose(){searchController.dispose();super.dispose();}
  Future<void> loadBook() async {
   try {
    final raw=await rootBundle.loadString('assets/books/library.json');
@@ -297,9 +300,11 @@ class _OfflineReaderPageState extends State<OfflineReaderPage> {
   ])),
  ]);
  Widget _readerContent(){
-  final chapters=record!['chapters'] as List<dynamic>? ?? [];
+  final chapters=(record!['chapters'] as List<dynamic>? ?? []).where((chapter)=>chapter is Map).map((chapter)=>Map<String,dynamic>.from(chapter as Map)).toList();
   final source=record!['source']?.toString() ?? '';
   final edition=record!['edition']?.toString() ?? '';
+  final normalized=normalizeArabic(searchQuery.trim());
+  final visibleChapters=chapters.where((chapter)=>normalized.isEmpty||normalizeArabic('\${chapter['title']??''} \${chapter['text']??''}').contains(normalized)).toList();
   return ListView(padding:const EdgeInsets.all(16),children:[
    Text(widget.book.title,textAlign:TextAlign.center,style:const TextStyle(color:green,fontSize:24,fontWeight:FontWeight.bold)),
    const SizedBox(height:6),Text(widget.book.author,textAlign:TextAlign.center),
@@ -307,17 +312,16 @@ class _OfflineReaderPageState extends State<OfflineReaderPage> {
     const SizedBox(height:14),Container(padding:const EdgeInsets.all(12),decoration:BoxDecoration(color:Colors.white,borderRadius:BorderRadius.circular(12),border:Border.all(color:gold)),child:Text('المصدر: $source\nالطبعة: $edition',style:const TextStyle(height:1.8))),
    ],
    const SizedBox(height:14),
+   TextField(controller:searchController,onChanged:(value)=>setState(()=>searchQuery=value),decoration:InputDecoration(hintText:'ابحث داخل فصول الكتاب...',prefixIcon:const Icon(Icons.search,color:green),suffixIcon:searchQuery.isEmpty?null:IconButton(onPressed:(){searchController.clear();setState(()=>searchQuery='');},icon:const Icon(Icons.close)),filled:true,fillColor:Colors.white,border:OutlineInputBorder(borderRadius:BorderRadius.circular(12)))),
+   const SizedBox(height:8),
    Row(children:[const Text('حجم الخط'),Expanded(child:Slider(min:15,max:30,divisions:10,value:fontSize,onChanged:(v)=>setState(()=>fontSize=v))),Text(fontSize.round().toString())]),
    if(chapters.isEmpty)const Padding(padding:EdgeInsets.all(20),child:Text('لا توجد فصول مضافة لهذا الكتاب بعد.',textAlign:TextAlign.center))
-   else ...chapters.map((chapter){
-    final item=Map<String,dynamic>.from(chapter as Map);
-    return Card(color:Colors.white,child:ExpansionTile(title:Text(item['title']?.toString()??'فصل',style:const TextStyle(color:green,fontWeight:FontWeight.bold)),children:[Padding(padding:const EdgeInsets.all(16),child:SelectableText(item['text']?.toString()??'',style:TextStyle(fontSize:fontSize,height:2.0)))]));
-   }),
+   else if(visibleChapters.isEmpty)const Padding(padding:EdgeInsets.all(20),child:Text('لا توجد فصول أو مقاطع تطابق عبارة البحث.',textAlign:TextAlign.center))
+   else ...visibleChapters.map((item)=>Card(color:Colors.white,child:ExpansionTile(title:Text(item['title']?.toString()??'فصل',style:const TextStyle(color:green,fontWeight:FontWeight.bold)),children:[Padding(padding:const EdgeInsets.all(16),child:SelectableText(item['text']?.toString()??'',style:TextStyle(fontSize:fontSize,height:2.0)))]))),
    if(record!['review_note']!=null)Padding(padding:const EdgeInsets.only(top:12),child:Text(record!['review_note'].toString(),style:const TextStyle(color:Colors.brown,height:1.8,fontSize:12))),
   ]);
  }
 }
-
 class _BookMetaRow extends StatelessWidget {
  final String label,value;
  const _BookMetaRow({required this.label,required this.value});
