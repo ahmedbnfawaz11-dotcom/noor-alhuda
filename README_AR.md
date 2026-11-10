@@ -91,3 +91,11 @@
 - نُقلت المتون كما وردت في ملفات المصدر، دون إضافة أحكام حديثية من التطبيق أو إعادة صياغة للنص.
 - ترخيص مستودع المصدر: The Unlicense. وتبقى الحاجة قائمة لمقابلة النصوص على طبعة محققة ومراجعتها علمياً قبل اعتماد الاستدلال.
 - المصدر: https://github.com/fawazahmed0/hadith-api/tree/1/editions — الترخيص: https://github.com/fawazahmed0/hadith-api/blob/1/LICENSE.
+
+
+## إضافة سنن ابن ماجه
+- أُدرج النص العربي من `ara-ibnmajah1.json` في مشروع `fawazahmed0/hadith-api`، الفرع `1`.
+- يحتوي المصدر على 4343 سجلاً، منها 4338 رواية ذات متن غير فارغ، موزعة على 38 باباً/كتاباً في خمسة ملفات محلية.
+- أُبقيت المتون وأرقام الروايات كما وردت في المصدر، ولم يضف التطبيق أحكاماً حديثية.
+- ترخيص المستودع: The Unlicense. يلزم التدقيق على طبعة محققة قبل اعتماد الاستدلال.
+- المصدر: https://github.com/fawazahmed0/hadith-api/tree/1/editions/ara-ibnmajah1.json — الترخيص: https://github.com/fawazahmed0/hadith-api/blob/1/LICENSE.
