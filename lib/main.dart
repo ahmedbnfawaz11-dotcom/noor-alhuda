@@ -289,22 +289,49 @@ class _OfflineReaderPageState extends State<OfflineReaderPage> {
   final prefs=await SharedPreferences.getInstance();
   await prefs.setDouble(_fontKey,value);
  }
+ static const _splitBookAssets=<String,List<String>>{
+  'صحيح البخاري':[
+   'assets/books/sahih_bukhari_01.json','assets/books/sahih_bukhari_02.json','assets/books/sahih_bukhari_03.json',
+   'assets/books/sahih_bukhari_04.json','assets/books/sahih_bukhari_05.json','assets/books/sahih_bukhari_06.json',
+  ],
+  'صحيح مسلم':[
+   'assets/books/sahih_muslim_01.json','assets/books/sahih_muslim_02.json','assets/books/sahih_muslim_03.json',
+   'assets/books/sahih_muslim_04.json','assets/books/sahih_muslim_05.json',
+  ],
+ };
+ static final Map<String,Future<Map<String,dynamic>>> _bookCache={};
+ Future<Map<String,dynamic>> _loadBookRecord() => _bookCache.putIfAbsent(widget.book.title,() async {
+  final paths=_splitBookAssets[widget.book.title];
+  if(paths!=null){
+   final raws=await Future.wait(paths.map((path)=>rootBundle.loadString(path)));
+   final records=raws.map((raw){
+    final decoded=jsonDecode(raw) as Map<String,dynamic>;
+    final all=decoded['books'] as Map<String,dynamic>;
+    return Map<String,dynamic>.from(all[widget.book.title] as Map);
+   }).toList();
+   final combined=Map<String,dynamic>.from(records.first);
+   combined['chapters']=records.expand((item)=>(item['chapters'] as List<dynamic>? ?? [])).toList();
+   return combined;
+  }
+  final raw=await rootBundle.loadString('assets/books/library.json');
+  final decoded=jsonDecode(raw) as Map<String,dynamic>;
+  final all=decoded['books'] as Map<String,dynamic>? ?? {};
+  final item=all[widget.book.title];
+  return item is Map?Map<String,dynamic>.from(item):<String,dynamic>{};
+ });
  Future<void> loadBook() async {
   try {
-   final raw=await rootBundle.loadString('assets/books/library.json');
-   final decoded=jsonDecode(raw) as Map<String,dynamic>;
-   final all=decoded['books'] as Map<String,dynamic>? ?? {};
-   final item=all[widget.book.title];
+   final item=await _loadBookRecord();
    final prefs=await SharedPreferences.getInstance();
    final savedFont=prefs.getDouble(_fontKey);
    final savedPosition=prefs.getDouble(_positionKey)??0;
    if(!mounted)return;
    setState((){
-    record=item is Map?Map<String,dynamic>.from(item):null;
+    record=item.isEmpty?null:item;
     if(savedFont!=null)fontSize=savedFont.clamp(15.0,30.0).toDouble();
     loading=false;
    });
-   if(item is Map && savedPosition>0){
+   if(item.isNotEmpty && savedPosition>0){
     WidgetsBinding.instance.addPostFrameCallback((_){
      if(!mounted||!readerScrollController.hasClients)return;
      final max=readerScrollController.position.maxScrollExtent;
