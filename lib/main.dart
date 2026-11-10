@@ -329,6 +329,13 @@ class _BookDetailsState extends State<BookDetails> {
         if(bookData['license']!=null) Text('الإتاحة والترخيص: ${bookData['license']}',style:const TextStyle(color:Colors.brown,fontSize:12,height:1.8)),
         const SizedBox(height:10),
         SelectableText(text,style:TextStyle(fontSize:fontSize,height:2.0,color:Colors.black87)),
+        const SizedBox(height:10),
+        FilledButton.icon(
+         onPressed:()=>Navigator.push(context,MaterialPageRoute(builder:(_)=>StructuredBookReader(assetPath:widget.book.contentAsset!,bookTitle:widget.book.title))),
+         icon:const Icon(Icons.chrome_reader_mode_outlined),
+         label:const Text('فتح القارئ المنظم والبحث داخل الكتاب'),
+         style:FilledButton.styleFrom(backgroundColor:green,foregroundColor:gold),
+        ),
        ]);
       } catch (_) {
        return const Text('صيغة ملف الكتاب غير صالحة للعرض.');
@@ -359,6 +366,111 @@ class _BookDetailsState extends State<BookDetails> {
    if(widget.book.contentAsset==null&&widget.book.pdfAsset==null&&widget.book.pdfFilePath==null) Container(padding:const EdgeInsets.all(14),decoration:BoxDecoration(color:const Color(0xFFFFF4DD),borderRadius:BorderRadius.circular(12),border:Border.all(color:gold)),child:const Text('هذا الكتاب مدرج في الفهرس ببياناته التعريفية فقط؛ لم يُرفق نصه الكامل بعد. لن نعرض مقتطفاً على أنه كتاب كامل، ولن نضيف نصاً قبل التحقق من مصدره وحقوق إتاحته.',style:TextStyle(color:Colors.brown,height:1.9))),
    ])),
   ));
+}
+
+
+/// قارئ النص المنظم: فصول قابلة للاختيار، بحث داخل الكتاب، وحفظ آخر فصل محلياً.
+class StructuredBookReader extends StatefulWidget {
+ final String assetPath;
+ final String bookTitle;
+ const StructuredBookReader({super.key,required this.assetPath,required this.bookTitle});
+ @override State<StructuredBookReader> createState()=>_StructuredBookReaderState();
+}
+class _StructuredBookReaderState extends State<StructuredBookReader> {
+ final searchController=TextEditingController();
+ List<Map<String,dynamic>> chapters=[];
+ String source='',edition='',license='';
+ int selected=0;
+ bool loading=true;
+ @override void initState(){super.initState();_load();}
+ Future<void> _load() async {
+  try {
+   final raw=await rootBundle.loadString(widget.assetPath);
+   final data=jsonDecode(raw) as Map<String,dynamic>;
+   final book=(data['books'] as Map<String,dynamic>)[widget.bookTitle] as Map<String,dynamic>;
+   final rawChapters=book['chapters'] as List<dynamic>;
+   final prefs=await SharedPreferences.getInstance();
+   final saved=prefs.getInt('reader_'+widget.bookTitle)??0;
+   if(!mounted)return;
+   setState((){
+    chapters=rawChapters.map((e)=>Map<String,dynamic>.from(e as Map)).toList();
+    source=(book['source']??'').toString();
+    edition=(book['edition']??'').toString();
+    license=(book['license']??'').toString();
+    selected=saved.clamp(0,rawChapters.length-1);
+    loading=false;
+   });
+  } catch (_) { if(mounted)setState(()=>loading=false); }
+ }
+ Future<void> _select(int index) async {
+  setState(()=>selected=index);
+  final prefs=await SharedPreferences.getInstance();
+  await prefs.setInt('reader_'+widget.bookTitle,index);
+ }
+ @override void dispose(){searchController.dispose();super.dispose();}
+ @override Widget build(BuildContext context) {
+  final query=normalizeArabic(searchController.text.trim());
+  final matches=<Map<String,String>>[];
+  if(query.isNotEmpty) {
+   for(var i=0;i<chapters.length;i++) {
+    final chapter=chapters[i];
+    final body=(chapter['text']??'').toString();
+    final normalized=normalizeArabic(body);
+    var from=0;
+    while(true) {
+     final at=normalized.indexOf(query,from);
+     if(at<0)break;
+     final start=(at-55).clamp(0,body.length);
+     final end=(at+query.length+85).clamp(0,body.length);
+     matches.add({'chapter':(chapter['title']??'').toString(),'excerpt':body.substring(start,end).replaceAll('\n',' ')});
+     from=at+query.length;
+     if(matches.length>=100)break;
+    }
+    if(matches.length>=100)break;
+   }
+  }
+  return Directionality(textDirection:TextDirection.rtl,child:Scaffold(
+   appBar:AppBar(title:Text('قارئ '+widget.bookTitle,maxLines:1,overflow:TextOverflow.ellipsis)),
+   body:loading?const Center(child:CircularProgressIndicator()):chapters.isEmpty?const Center(child:Text('تعذر تحميل فصول الكتاب.')):ListView(
+    padding:const EdgeInsets.all(16),
+    children:[
+     if(source.isNotEmpty)Text('المصدر: '+source,style:const TextStyle(color:Colors.brown,fontSize:12,height:1.8)),
+     if(edition.isNotEmpty)Text('النسخة: '+edition,style:const TextStyle(color:Colors.brown,fontSize:12,height:1.8)),
+     if(license.isNotEmpty)Text('الترخيص: '+license,style:const TextStyle(color:Colors.brown,fontSize:12,height:1.8)),
+     const SizedBox(height:12),
+     TextField(controller:searchController,onChanged:(_)=>setState((){}),decoration:InputDecoration(prefixIcon:const Icon(Icons.search),hintText:'ابحث داخل هذا الكتاب...',filled:true,fillColor:Colors.white,border:OutlineInputBorder(borderRadius:BorderRadius.circular(12)))),
+     if(query.isNotEmpty) ...[
+      const SizedBox(height:8),
+      Text('نتائج البحث: '+matches.length.toString()+(matches.length==100?' أو أكثر':''),style:const TextStyle(color:green,fontWeight:FontWeight.bold)),
+      ...matches.map((m)=>Card(child:ListTile(title:Text(m['chapter']!),subtitle:Text(m['excerpt']!,maxLines:3,overflow:TextOverflow.ellipsis),onTap:(){
+       final i=chapters.indexWhere((c)=>(c['title']??'').toString()==m['chapter']);
+       if(i>=0){_select(i);searchController.clear();setState((){});}
+      }))),
+     ] else ...[
+      const SizedBox(height:12),
+      const Heading('فهرس الفصول'),
+      const SizedBox(height:6),
+      DropdownButtonFormField<int>(
+       value:selected,
+       isExpanded:true,
+       decoration:const InputDecoration(border:OutlineInputBorder(),labelText:'اختر الباب أو الفصل'),
+       items:List.generate(chapters.length,(i)=>DropdownMenuItem(value:i,child:Text((chapters[i]['title']??'فصل '+(i+1).toString()).toString(),overflow:TextOverflow.ellipsis))),
+       onChanged:(v){if(v!=null)_select(v);},
+      ),
+      const SizedBox(height:14),
+      Text((chapters[selected]['title']??'').toString(),style:const TextStyle(color:green,fontSize:22,fontWeight:FontWeight.bold)),
+      const Divider(color:gold),
+      SelectableText((chapters[selected]['text']??'').toString(),style:const TextStyle(fontSize:18,height:2.05)),
+      const SizedBox(height:18),
+      Row(children:[
+       Expanded(child:OutlinedButton.icon(onPressed:selected>0?()=>_select(selected-1):null,icon:const Icon(Icons.arrow_forward),label:const Text('الفصل السابق'))),
+       const SizedBox(width:8),
+       Expanded(child:FilledButton.icon(onPressed:selected<chapters.length-1?()=>_select(selected+1):null,icon:const Icon(Icons.arrow_back),label:const Text('الفصل التالي'))),
+      ]),
+     ],
+    ),
+  ));
+ }
 }
 
 class OrnatePagePainter extends CustomPainter {
