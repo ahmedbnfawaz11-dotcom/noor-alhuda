@@ -105,7 +105,7 @@
 - لم يُضف التطبيق أحكاماً حديثية أو إعادة صياغة للنصوص. يلزم تدقيق علمي ومقابلة على طبعة محققة قبل اعتماد الاستدلال.
 - الترخيص المعلن لمستودع المصدر: The Unlicense. المصدر: https://github.com/fawazahmed0/hadith-api/tree/1/editions/ara-ibnmajah — الترخيص: https://github.com/fawazahmed0/hadith-api/blob/1/LICENSE.
 
-## إضافة من كتب الإمام الشافعي
+## إضافات من كتب الإمام الشافعي
 - **الرسالة:** النص العربي من نسخة OpenITI المنظفة `0204Shafici.Risala.LAL2013020402-ara2`، بتحقيق جوزيف إي. لوري، NYU Press، 2013.
 - **اختلاف الحديث:** النص العربي من نسخة OpenITI المنظفة `0204Shafici.IkhtilafHadith.JK000560-ara1`.
 - مصدر النسختين: Open Islamicate Texts Initiative (OpenITI)، مستودع `OpenITI/0225AH`، وترخيص corpus هو CC BY-NC-SA 4.0. أزيلت علامات التنسيق الداخلية للمدونة لتسهيل القراءة مع الحفاظ على المتن وترقيم الفقرات.
