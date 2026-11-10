@@ -162,7 +162,7 @@ String normalizeArabic(String value) => value
  .replaceAll('آ','ا')
  .replaceAll('ى','ي');
 
-class Book { final String title,author,category,summary; final String? pdfAsset; const Book(this.title,this.author,this.category,this.summary,{this.pdfAsset}); }
+class Book { final String title,author,category,summary; final String? pdfAsset; final String? pdfFilePath; const Book(this.title,this.author,this.category,this.summary,{this.pdfAsset,this.pdfFilePath}); }
 const categories=['القرآن وعلومه','الحديث الشريف','العقيدة والتوحيد','الفقه والحديث','السيرة والشمائل','أصول الفقه','الحديث والآداب','الأذكار والرقائق','علوم اللغة العربية','كتب أهل السنة والجماعة','التاريخ والتراجم','المسلمون الجدد','قسم الأطفال'];
 
 Future<void> main() async { WidgetsFlutterBinding.ensureInitialized(); final p=await SharedPreferences.getInstance(); runApp(NoorApp(firstRun:!(p.getBool('seen_intro')??false))); }
@@ -332,10 +332,10 @@ class _BookDetailsState extends State<BookDetails> {
     const Text('المصدر الرقمي: OpenITI، والترخيص CC BY-NC-SA 4.0. هذه النسخة تحتاج إلى مقابلة على الطبعة المطبوعة، ولا يجوز استخدامها تجارياً دون إذن مستقل.',style:TextStyle(color:Colors.brown,fontSize:12,height:1.8)),
    ],
    const SizedBox(height:18),
-   if(widget.book.pdfAsset!=null) ...[
+   if(widget.book.pdfAsset!=null||widget.book.pdfFilePath!=null) ...[
     const SizedBox(height:18),
     FilledButton.icon(
-     onPressed:()=>Navigator.push(c,MaterialPageRoute(builder:(_)=>InAppPdfReader(title:widget.book.title,assetPath:widget.book.pdfAsset!))),
+     onPressed:()=>Navigator.push(c,MaterialPageRoute(builder:(_)=>InAppPdfReader(title:widget.book.title,assetPath:widget.book.pdfAsset,filePath:widget.book.pdfFilePath))),
      icon:const Icon(Icons.picture_as_pdf),
      label:const Text('اقرأ الكتاب داخل نور الهدى'),
      style:FilledButton.styleFrom(backgroundColor:green,foregroundColor:gold),
