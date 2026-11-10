@@ -214,14 +214,14 @@ class _HomeState extends State<HomePage> {
  if(matches.isEmpty)const Padding(padding:EdgeInsets.all(20),child:Text('لا توجد نتائج مطابقة.',textAlign:TextAlign.center))else ...matches.map((b)=>BookTile(book:b,saved:saved.contains(b.key),onSave:()=>toggle(b))),
  const SizedBox(height:10),const Text('تنبيه: هذه نسخة تأسيسية للفهرس والتصميم. النصوص الكاملة تحتاج إلى إدراج نسخ رقمية موثوقة ومراجعة بياناتها قبل إتاحتها.',style:TextStyle(color:Colors.brown,fontSize:12,height:1.7))
  ]),
- bottomNavigationBar:NavigationBar(selectedIndex:tab==1?1:0,onDestinationSelected:(v)=>setState(()=>tab=v),destinations:const[NavigationDestination(icon:Icon(Icons.home_outlined),label:'الرئيسية'),NavigationDestination(icon:Icon(Icons.bookmark_outline),label:'مكتبتي')]),
+ bottomNavigationBar:NavigationBar(selectedIndex:tab,onDestinationSelected:(v)=>setState(()=>tab=v),destinations:const[NavigationDestination(icon:Icon(Icons.home_outlined),label:'الرئيسية'),NavigationDestination(icon:Icon(Icons.bookmark_outline),label:'مكتبتي'),NavigationDestination(icon:Icon(Icons.person_outline),label:'المسلم الجديد'),NavigationDestination(icon:Icon(Icons.child_care),label:'الأطفال')]),
  ));
  }
 }
 class Heading extends StatelessWidget {final String title;const Heading(this.title,{super.key});@override Widget build(BuildContext c)=>Row(children:[Container(width:4,height:22,color:gold),const SizedBox(width:9),Text(title,style:const TextStyle(color:green,fontSize:18,fontWeight:FontWeight.bold))]);}
 class BookTile extends StatelessWidget {
  final Book book;final bool saved;final VoidCallback onSave;const BookTile({super.key,required this.book,required this.saved,required this.onSave});
- @override Widget build(BuildContext c)=>Card(color:Colors.white,elevation:0,margin:const EdgeInsets.symmetric(vertical:5),shape:RoundedRectangleBorder(borderRadius:BorderRadius.circular(14),side:const BorderSide(color:Color(0xFFDDCBA7))),child:ListTile(leading:Container(width:42,height:48,decoration:BoxDecoration(color:green,borderRadius:BorderRadius.circular(8)),child:const Icon(Icons.menu_book,color:gold)),title:Text(book.title,style:const TextStyle(color:green,fontWeight:FontWeight.bold)),subtitle:Text(book.author+'\n'+book.category,maxLines:2,overflow:TextOverflow.ellipsis),trailing:IconButton(onPressed:onSave,icon:Icon(saved?Icons.bookmark:Icons.bookmark_border,color:gold)),onTap:()=>Navigator.push(c,MaterialPageRoute(builder:(_)=>BookDetails(book:book,saved:saved,onSave:onSave)))));
+ @override Widget build(BuildContext c)=>Card(color:Colors.white,elevation:0,margin:const EdgeInsets.symmetric(vertical:5),shape:RoundedRectangleBorder(borderRadius:BorderRadius.circular(14),side:const BorderSide(color:Color(0xFFDDCBA7))),child:ListTile(leading:Container(width:42,height:48,decoration:BoxDecoration(color:green,borderRadius:BorderRadius.circular(8)),child:const Icon(Icons.menu_book,color:gold)),title:Text(book.title,style:const TextStyle(color:green,fontWeight:FontWeight.bold)),subtitle:Text(book.author+'\n'+book.category+' • '+(book.contentAsset!=null||book.pdfAsset!=null||book.pdfFilePath!=null?'نص مرفق':'بيانات الفهرس فقط'),maxLines:2,overflow:TextOverflow.ellipsis),trailing:IconButton(onPressed:onSave,icon:Icon(saved?Icons.bookmark:Icons.bookmark_border,color:gold)),onTap:()=>Navigator.push(c,MaterialPageRoute(builder:(_)=>BookDetails(book:book,saved:saved,onSave:onSave)))));
 }
 class SunniBooksPage extends StatelessWidget {
  final Set<String> saved;
@@ -414,20 +414,35 @@ class NewMuslimPage extends StatelessWidget {
  ]));
 }
 
-class ChildrenPage extends StatelessWidget {
+class ChildrenPage extends StatefulWidget {
  const ChildrenPage({super.key});
+ @override State<ChildrenPage> createState()=>_ChildrenPageState();
+}
+
+class _ChildrenPageState extends State<ChildrenPage> {
  static const activities = <String, List<String>>{
   'تعلم الوضوء':['غسل الكفين','المضمضة والاستنشاق','غسل الوجه','غسل اليدين إلى المرفقين','مسح الرأس والأذنين','غسل القدمين إلى الكعبين'],
   'تعلم الصلاة':['التعرف إلى القبلة ودخول الوقت','تكبيرة الإحرام','قراءة الفاتحة وما تيسر','الركوع والرفع منه','السجود والجلوس بين السجدتين','التشهد والسلام'],
   'آداب المسلم الصغير':['الصدق والأمانة','بر الوالدين','الرفق بالناس','المحافظة على النظافة','إفشاء السلام'],
  };
- @override Widget build(BuildContext c)=>Directionality(textDirection:TextDirection.rtl,child:ListView(padding:const EdgeInsets.all(16),children:[
-  const Heading('براعم نور الهدى'),
-  const SizedBox(height:8),
-  const Text('تعلم ممتع ومتدرج للصغار، مع رسومات تعليمية بلا ملامح وجه ظاهرة؛ مثل الشخصيات الظلية أو المرسومة من الخلف.',style:TextStyle(height:1.9)),
-  const SizedBox(height:12),
-  ...activities.entries.map((e)=>Card(child:ExpansionTile(leading:const Icon(Icons.auto_stories,color:gold),title:Text(e.key,style:const TextStyle(color:green,fontWeight:FontWeight.bold)),children:e.value.asMap().entries.map((step)=>ListTile(leading:CircleAvatar(backgroundColor:green,foregroundColor:gold,child:Text('${step.key+1}')),title:Text(step.value))).toList()))),
- ]));
+ Set<String> completed={};
+ @override void initState(){super.initState();_loadProgress();}
+ Future<void> _loadProgress() async {final p=await SharedPreferences.getInstance();if(mounted)setState(()=>completed=p.getStringList('children_completed_steps')?.toSet()??{});}
+ Future<void> _toggleStep(String key,bool value) async {setState((){if(value){completed.add(key);}else{completed.remove(key);}});final p=await SharedPreferences.getInstance();await p.setStringList('children_completed_steps',completed.toList());}
+ @override Widget build(BuildContext c) {
+  final total=activities.values.fold<int>(0,(sum,steps)=>sum+steps.length);
+  return Directionality(textDirection:TextDirection.rtl,child:ListView(padding:const EdgeInsets.all(16),children:[
+   const Heading('براعم نور الهدى'),
+   const SizedBox(height:8),
+   const Text('تعلم متدرج للصغار، مع رسومات تعليمية بلا ملامح وجه ظاهرة؛ مثل الشخصيات الظلية أو المرسومة من الخلف. ضع علامة عند إتمام كل خطوة، وسيُحفظ التقدم على هذا الجهاز.',style:TextStyle(height:1.9)),
+   const SizedBox(height:10),
+   LinearProgressIndicator(value:total==0?0:completed.length/total,color:green,backgroundColor:gold,minHeight:8),
+   const SizedBox(height:6),
+   Text('أنجزت ${completed.length} من ${total} خطوات',textAlign:TextAlign.center,style:const TextStyle(color:green,fontWeight:FontWeight.bold)),
+   const SizedBox(height:12),
+   ...activities.entries.map((e)=>Card(child:ExpansionTile(leading:const Icon(Icons.auto_stories,color:gold),title:Text(e.key,style:const TextStyle(color:green,fontWeight:FontWeight.bold)),subtitle:Text('${e.value.where((step)=>completed.contains('${e.key}::$step')).length} من ${e.value.length} مكتملة'),children:e.value.map((step){final key='${e.key}::$step';return CheckboxListTile(value:completed.contains(key),activeColor:green,controlAffinity:ListTileControlAffinity.leading,title:Text(step),onChanged:(value)=>_toggleStep(key,value??false));}).toList()))),
+  ]));
+ }
 }
 
 
