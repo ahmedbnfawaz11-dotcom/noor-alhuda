@@ -5,6 +5,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 
 const green = Color(0xFF123B30), gold = Color(0xFFC6A45C), paper = Color(0xFFF6F0E4);
 const books = <Book>[
+ Book('القرآن الكريم','كلام الله تعالى','القرآن وعلومه','المصحف الشريف بالرسم العثماني، كاملاً في 114 سورة، من نص مشروع تنزيل الموثق.'),
  Book('صحيح البخاري','الإمام محمد بن إسماعيل البخاري','الحديث الشريف','من أمهات كتب الحديث النبوي.'),
  Book('صحيح مسلم','الإمام مسلم بن الحجاج','الحديث الشريف','مصنف من أشهر دواوين السنة النبوية.'),
  Book('رياض الصالحين','الإمام يحيى بن شرف النووي','الحديث والآداب','أحاديث في الإيمان والعبادات والأخلاق والآداب.'),
@@ -250,7 +251,7 @@ class _BookDetailsState extends State<BookDetails> {
    const SizedBox(height:8),
    FilledButton.tonalIcon(onPressed:!noteLoaded||noteSaving?null:saveNote,icon:const Icon(Icons.save_outlined),label:Text(noteSaving?'جارٍ الحفظ...':'احفظ ملاحظاتي على الجهاز')),
    const SizedBox(height:18),
-   Container(padding:const EdgeInsets.all(14),decoration:BoxDecoration(color:const Color(0xFFFFF4DD),borderRadius:BorderRadius.circular(12),border:Border.all(color:gold)),child:const Text('تنبيه علمي: هذه الصفحة تعرض بيانات الفهرس والنبذة فقط. النص الكامل للكتاب غير مرفق في هذه النسخة. لن ننسب نصوصاً إلى مؤلفيها قبل التحقق من النسخة والطبعة والمصدر وحقوق الإتاحة.',style:TextStyle(color:Colors.brown,height:1.9))),
+   if(widget.book.title=='القرآن الكريم') Container(padding:const EdgeInsets.all(14),decoration:BoxDecoration(color:const Color(0xFFFFF4DD),borderRadius:BorderRadius.circular(12),border:Border.all(color:gold)),child:const Text('النص القرآني الكامل متاح داخل التطبيق دون إنترنت، منقول حرفياً عن مشروع تنزيل بالرسم العثماني، مع حفظ إشعار المصدر والترخيص.',style:TextStyle(color:green,height:1.9))) else Container(padding:const EdgeInsets.all(14),decoration:BoxDecoration(color:const Color(0xFFFFF4DD),borderRadius:BorderRadius.circular(12),border:Border.all(color:gold)),child:const Text('تنبيه علمي: هذه الصفحة تعرض بيانات الفهرس والنبذة فقط. النص الكامل لهذا الكتاب غير مرفق بعد. لن ننسب نصوصاً إلى مؤلفيها قبل التحقق من النسخة والطبعة والمصدر وحقوق الإتاحة.',style:TextStyle(color:Colors.brown,height:1.9))),
   ]),
  ));
 }
