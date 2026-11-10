@@ -20,3 +20,14 @@ flutter:
   uses-material-design: true
   assets:
     - assets/books/library.json
+    - assets/books/sahih_bukhari_01.json
+    - assets/books/sahih_bukhari_02.json
+    - assets/books/sahih_bukhari_03.json
+    - assets/books/sahih_bukhari_04.json
+    - assets/books/sahih_bukhari_05.json
+    - assets/books/sahih_bukhari_06.json
+    - assets/books/sahih_muslim_01.json
+    - assets/books/sahih_muslim_02.json
+    - assets/books/sahih_muslim_03.json
+    - assets/books/sahih_muslim_04.json
+    - assets/books/sahih_muslim_05.json
