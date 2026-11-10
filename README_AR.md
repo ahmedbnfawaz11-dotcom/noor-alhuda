@@ -99,3 +99,9 @@
 - أُبقيت المتون وأرقام الروايات كما وردت في المصدر، ولم يضف التطبيق أحكاماً حديثية.
 - ترخيص المستودع: The Unlicense. يلزم التدقيق على طبعة محققة قبل اعتماد الاستدلال.
 - المصدر: https://github.com/fawazahmed0/hadith-api/tree/1/editions/ara-ibnmajah1.json — الترخيص: https://github.com/fawazahmed0/hadith-api/blob/1/LICENSE.
+
+## إضافة جديدة — سنن النسائي
+- أُدرج النص العربي من 51 قسماً في الإصدار `ara-nasai` من مشروع `fawazahmed0/hadith-api` (الفرع `1`).
+- يضم الإدراج 5679 متناً غير فارغ، موزعة على 51 كتاباً/باباً في ستة ملفات محلية. السجلات التي لا تحتوي متناً لم تُعرض، مع إبقاء أرقام الروايات الأصلية.
+- لم يُضف التطبيق حكماً حديثياً أو إعادة صياغة للنص، وتظل المقابلة على طبعة محققة والمراجعة العلمية لازمتين قبل اعتماد الاستدلال.
+- الترخيص المعلن لمستودع المصدر: The Unlicense. المصدر: https://github.com/fawazahmed0/hadith-api/tree/1/editions/ara-nasai — الترخيص: https://github.com/fawazahmed0/hadith-api/blob/1/LICENSE.
