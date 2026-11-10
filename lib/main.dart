@@ -474,6 +474,27 @@ class _BookMetaRow extends StatelessWidget {
 class Favorites extends StatelessWidget {final Set<String> saved;final Future<void> Function(Book) onToggle;const Favorites({super.key,required this.saved,required this.onToggle});@override Widget build(BuildContext c){final list=catalogBooks.where((b)=>saved.contains(b.title)).toList();return list.isEmpty?const Center(child:Text('لم تضف كتباً إلى مكتبتك بعد.')):ListView(padding:const EdgeInsets.all(12),children:list.map((b)=>BookTile(book:b,saved:true,onSave:()=>onToggle(b))).toList());}}
 class InfoPage extends StatelessWidget {final String title,body;const InfoPage({super.key,required this.title,required this.body});@override Widget build(BuildContext c)=>Directionality(textDirection:TextDirection.rtl,child:Scaffold(appBar:AppBar(title:Text(title)),body:Padding(padding:const EdgeInsets.all(22),child:Text(body,style:const TextStyle(fontSize:17,height:2)))));}
 
+class SectionBanner extends StatelessWidget {
+ final String title;
+ final IconData icon;
+ const SectionBanner({super.key,required this.title,required this.icon});
+ @override Widget build(BuildContext c)=>Container(
+  padding:const EdgeInsets.symmetric(horizontal:16,vertical:17),
+  decoration:BoxDecoration(
+   gradient:const LinearGradient(begin:Alignment.topRight,end:Alignment.bottomLeft,colors:[green,Color(0xFF1D5A46),Color(0xFF0B2B23)]),
+   borderRadius:BorderRadius.circular(18),
+   border:Border.all(color:gold,width:1.2),
+   boxShadow:const [BoxShadow(color:Color(0x18000000),blurRadius:8,offset:Offset(0,3))],
+  ),
+  child:Row(children:[
+   Icon(icon,color:gold,size:34),
+   const SizedBox(width:13),
+   Expanded(child:Text(title,style:const TextStyle(color:Colors.white,fontSize:19,fontWeight:FontWeight.bold))),
+   const Icon(Icons.auto_awesome,color:gold,size:18),
+  ]),
+ );
+}
+
 class NewMuslimPage extends StatelessWidget {
  const NewMuslimPage({super.key});
  static const lessons = <String, String>{
@@ -484,7 +505,7 @@ class NewMuslimPage extends StatelessWidget {
   'قصار السور':'بدء التعلم بسور قصيرة مع الاستماع إلى تلاوة صحيحة وتصحيح النطق.',
  };
  @override Widget build(BuildContext c)=>Directionality(textDirection:TextDirection.rtl,child:ListView(padding:const EdgeInsets.all(16),children:[
-  const Heading('مرحباً بك في طريق العلم'),
+  const SectionBanner(title:'مرحباً بك في طريق العلم',icon:Icons.volunteer_activism),
   const SizedBox(height:8),
   const Text('دروس مرتبة للمسلم الجديد، بلغة سهلة وخطوات متدرجة. ستراجع المواد علمياً قبل نشر الدروس التفصيلية.',style:TextStyle(height:1.9)),
   const SizedBox(height:12),
@@ -500,7 +521,7 @@ class ChildrenPage extends StatelessWidget {
   'آداب المسلم الصغير':['الصدق والأمانة','بر الوالدين','الرفق بالناس','المحافظة على النظافة','إفشاء السلام'],
  };
  @override Widget build(BuildContext c)=>Directionality(textDirection:TextDirection.rtl,child:ListView(padding:const EdgeInsets.all(16),children:[
-  const Heading('براعم نور الهدى'),
+  const SectionBanner(title:'براعم نور الهدى',icon:Icons.child_friendly),
   const SizedBox(height:8),
   const Text('تعلم ممتع ومتدرج للصغار، مع رسومات تعليمية بلا ملامح وجه ظاهرة؛ مثل الشخصيات الظلية أو المرسومة من الخلف.',style:TextStyle(height:1.9)),
   const SizedBox(height:12),
