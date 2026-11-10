@@ -50,7 +50,7 @@ void main() {
   });
 
   testWidgets('offline reader opens while local content loads', (tester) async {
-    await tester.pumpWidget(MaterialApp(
+    await tester.pumpWidget(const MaterialApp(
       home: OfflineReaderPage(
         book: const Book('كتاب غير مدرج للاختبار', 'مؤلف غير محدد', 'اختبار', ''),
       ),
