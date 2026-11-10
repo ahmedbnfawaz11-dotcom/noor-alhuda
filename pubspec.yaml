@@ -22,3 +22,4 @@ flutter:
   assets:
     - assets/books/shafii_jima_alilm.json
     - assets/books/thalathat_alusul.json
+    - assets/books/alqawaid_alarbaa.json
