@@ -85,6 +85,24 @@ void main() {
     expect(find.textContaining('ويكي مصدر'), findsOneWidget);
   });
 
+  testWidgets('structured offline reader supports chapter selection and in-book search', (tester) async {
+    SharedPreferences.setMockInitialValues({});
+    await tester.pumpWidget(const MaterialApp(
+      home: StructuredBookReader(
+        assetPath: 'assets/books/alajurrumiyyah.json',
+        bookTitle: 'الآجرومية',
+      ),
+    ));
+    await tester.pumpAndSettle();
+
+    expect(find.text('فهرس الفصول'), findsOneWidget);
+    expect(find.text('متن الآجرومية'), findsOneWidget);
+    await tester.enterText(find.byType(TextField), 'الكلام هو');
+    await tester.pumpAndSettle();
+    expect(find.textContaining('نتائج البحث'), findsOneWidget);
+    expect(find.textContaining('متن الآجرومية'), findsWidgets);
+  });
+
   test('book identity includes both title and author', () {
     expect(books.first.key, '${books.first.title}::${books.first.author}');
   });
