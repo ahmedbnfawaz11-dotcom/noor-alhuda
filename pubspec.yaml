@@ -21,3 +21,4 @@ flutter:
   uses-material-design: true
   assets:
     - assets/books/shafii_jima_alilm.json
+    - assets/books/thalathat_alusul.json
