@@ -288,8 +288,8 @@ class _BookDetailsState extends State<BookDetails> {
  @override void dispose(){noteController.dispose();super.dispose();}
  @override Widget build(BuildContext c)=>Directionality(textDirection:TextDirection.rtl,child:Scaffold(
   appBar:AppBar(title:const Text('بيانات الكتاب')),
-  body:ListView(padding:const EdgeInsets.all(18),children:[
-   Container(height:142,decoration:BoxDecoration(gradient:const LinearGradient(colors:[green,Color(0xFF1D5A46)]),borderRadius:BorderRadius.circular(18),border:Border.all(color:gold)),child:const Icon(Icons.menu_book,color:gold,size:74)),
+  body:CustomPaint(painter:OrnatePagePainter(),child:ListView(padding:const EdgeInsets.fromLTRB(28,22,28,30),children:[
+    Container(padding:const EdgeInsets.symmetric(vertical:18,horizontal:12),decoration:BoxDecoration(gradient:const LinearGradient(colors:[Color(0xFF09271F),green,Color(0xFF09271F)]),borderRadius:BorderRadius.circular(16),border:Border.all(color:gold,width:1.8),boxShadow:[BoxShadow(color:green.withOpacity(0.16),blurRadius:10,offset:const Offset(0,4))]),child:const Column(children:[Icon(Icons.auto_awesome,color:gold,size:22),SizedBox(height:5),Text('موسوعة نُور الهُدَى',style:TextStyle(color:gold,fontSize:17,fontWeight:FontWeight.bold)),SizedBox(height:7),Icon(Icons.menu_book,color:Color(0xFFE8D5A5),size:52),SizedBox(height:5),Text('صفحة من كنوز العلم والتراث',style:TextStyle(color:paper,fontSize:12))])),
    const SizedBox(height:18),
    Text(widget.book.title,textAlign:TextAlign.center,style:const TextStyle(color:green,fontSize:25,fontWeight:FontWeight.bold)),
    const SizedBox(height:8),
@@ -340,8 +340,31 @@ class _BookDetailsState extends State<BookDetails> {
    FilledButton.tonalIcon(onPressed:!noteLoaded||noteSaving?null:saveNote,icon:const Icon(Icons.save_outlined),label:Text(noteSaving?'جارٍ الحفظ...':'احفظ ملاحظاتي على الجهاز')),
    const SizedBox(height:18),
    Container(padding:const EdgeInsets.all(14),decoration:BoxDecoration(color:const Color(0xFFFFF4DD),borderRadius:BorderRadius.circular(12),border:Border.all(color:gold)),child:const Text('تنبيه علمي: هذه الصفحة تعرض بيانات الفهرس والنبذة فقط. النص الكامل للكتاب غير مرفق في هذه النسخة. لن ننسب نصوصاً إلى مؤلفيها قبل التحقق من النسخة والطبعة والمصدر وحقوق الإتاحة.',style:TextStyle(color:Colors.brown,height:1.9))),
-  ]),
- ));
+   ])),
+  ));
+}
+
+class OrnatePagePainter extends CustomPainter {
+ @override void paint(Canvas canvas, Size size) {
+  final outer=Paint()..color=gold..style=PaintingStyle.stroke..strokeWidth=2.2;
+  final inner=Paint()..color=green..style=PaintingStyle.stroke..strokeWidth=1.1;
+  canvas.drawRRect(RRect.fromRectAndRadius(Rect.fromLTWH(9,9,size.width-18,size.height-18),const Radius.circular(18)),outer);
+  canvas.drawRRect(RRect.fromRectAndRadius(Rect.fromLTWH(15,15,size.width-30,size.height-30),const Radius.circular(14)),inner);
+  final ornament=Paint()..color=gold..style=PaintingStyle.stroke..strokeWidth=1.4;
+  for(final y in [28.0,size.height-28]) {
+   for(final x in [28.0,size.width-28]) {
+    final path=Path()..moveTo(x,y-7)..lineTo(x+7,y)..lineTo(x,y+7)..lineTo(x-7,y)..close();
+    canvas.drawPath(path,ornament);
+    canvas.drawCircle(Offset(x,y),2.2,Paint()..color=gold);
+   }
+  }
+  final center=size.width/2;
+  for(final y in [20.0,size.height-20]) {
+   final path=Path()..moveTo(center,y-5)..lineTo(center+5,y)..lineTo(center,y+5)..lineTo(center-5,y)..close();
+   canvas.drawPath(path,ornament);
+  }
+ }
+ @override bool shouldRepaint(covariant CustomPainter oldDelegate)=>false;
 }
 
 class _BookMetaRow extends StatelessWidget {
