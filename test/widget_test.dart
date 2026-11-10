@@ -50,8 +50,10 @@ void main() {
   });
 
   testWidgets('offline reader clearly reports when verified book text is absent', (tester) async {
-    await tester.pumpWidget(MaterialApp(home: OfflineReaderPage(book: books.first)));
-    await tester.pumpAndSettle();
+    await tester.pumpWidget(MaterialApp(home: OfflineReaderPage(book: const Book('كتاب غير مدرج للاختبار','مؤلف غير محدد','اختبار',''))));
+    await tester.pump();
+    await tester.pump(const Duration(milliseconds: 100));
+    await tester.pump(const Duration(milliseconds: 100));
 
     expect(find.text('قارئ الكتب'), findsOneWidget);
     expect(find.text('النص الكامل لهذا الكتاب غير متاح داخل النسخة الحالية'), findsOneWidget);
