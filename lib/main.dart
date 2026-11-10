@@ -479,7 +479,7 @@ class _OfflineReaderPageState extends State<OfflineReaderPage> {
    else if(visibleChapters.isEmpty)const Padding(padding:EdgeInsets.all(20),child:Text('لا توجد فصول أو مقاطع تطابق عبارة البحث.',textAlign:TextAlign.center))
    else ...visibleChapters.map((item){
     final chapterText=(item['text']??'').toString().trim();
-    final hadithStarts=RegExp(r'\\[رقم الحديث[^\\]]*\\]').allMatches(chapterText).toList();
+    final hadithStarts=RegExp(r'\[رقم الحديث[^\]]*\]').allMatches(chapterText).toList();
     final hasNumberedHadiths=hadithStarts.isNotEmpty;
     final entries=<String>[];
     if(hasNumberedHadiths){
@@ -492,7 +492,7 @@ class _OfflineReaderPageState extends State<OfflineReaderPage> {
     }
     return Card(color:Colors.white,child:ExpansionTile(
      title:Text(item['title']?.toString()??'فصل',style:const TextStyle(color:green,fontWeight:FontWeight.bold)),
-     subtitle:hasNumberedHadiths?Text('\\${entries.length} رواية — بالسند والمتن كما وردا في المصدر'):null,
+     subtitle:hasNumberedHadiths?Text('${entries.length} رواية — بالسند والمتن كما وردا في المصدر'):null,
      children:hasNumberedHadiths
       ?entries.asMap().entries.map((entry)=>Container(
        margin:const EdgeInsets.fromLTRB(10,5,10,9),
