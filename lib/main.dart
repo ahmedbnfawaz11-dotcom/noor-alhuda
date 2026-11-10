@@ -324,9 +324,9 @@ class _BookDetailsState extends State<BookDetails> {
        final chapters=bookData['chapters'] as List;
        final text=chapters.map((chapter)=>'${chapter['title']??''}\\n\\n${chapter['text'] as String}').join('\\n\\n');
        return Column(crossAxisAlignment:CrossAxisAlignment.stretch,children:[
-        if(data['source']!=null) Text('المصدر: ${data['source']}',style:const TextStyle(color:Colors.brown,fontSize:12,height:1.8)),
-        if(data['edition']!=null) Text('النسخة: ${data['edition']}',style:const TextStyle(color:Colors.brown,fontSize:12,height:1.8)),
-        if(data['license']!=null) Text('الإتاحة والترخيص: ${data['license']}',style:const TextStyle(color:Colors.brown,fontSize:12,height:1.8)),
+        if(bookData['source']!=null) Text('المصدر: ${bookData['source']}',style:const TextStyle(color:Colors.brown,fontSize:12,height:1.8)),
+        if(bookData['edition']!=null) Text('النسخة: ${bookData['edition']}',style:const TextStyle(color:Colors.brown,fontSize:12,height:1.8)),
+        if(bookData['license']!=null) Text('الإتاحة والترخيص: ${bookData['license']}',style:const TextStyle(color:Colors.brown,fontSize:12,height:1.8)),
         const SizedBox(height:10),
         SelectableText(text,style:TextStyle(fontSize:fontSize,height:2.0,color:Colors.black87)),
        ]);
