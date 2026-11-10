@@ -320,7 +320,7 @@ class _BookDetailsState extends State<BookDetails> {
       try {
        final data=jsonDecode(snapshot.data!);
        final chapters=(data['books']['جماع العلم']['chapters'] as List);
-       final text=chapters.map((chapter)=>chapter['text'] as String).join('\\n\\n');
+       final text=chapters.map((chapter)=>chapter['text'] as String).join('\n\n');
        return SelectableText(text,style:TextStyle(fontSize:fontSize,height:2.0,color:Colors.black87));
       } catch (_) {
        return const Text('صيغة ملف الكتاب غير صالحة للعرض.');
