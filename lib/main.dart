@@ -298,14 +298,14 @@ class _OfflineReaderPageState extends State<OfflineReaderPage> {
    if(!mounted)return;
    setState((){
     record=item is Map?Map<String,dynamic>.from(item):null;
-    if(savedFont!=null)fontSize=savedFont.clamp(15.0,30.0);
+    if(savedFont!=null)fontSize=savedFont.clamp(15.0,30.0).toDouble();
     loading=false;
    });
    if(item is Map && savedPosition>0){
     WidgetsBinding.instance.addPostFrameCallback((_){
      if(!mounted||!readerScrollController.hasClients)return;
      final max=readerScrollController.position.maxScrollExtent;
-     final restored=savedPosition.clamp(0.0,max);
+     final restored=savedPosition.clamp(0.0,max).toDouble();
      readerScrollController.jumpTo(restored);
      lastSavedPosition=restored;
     });
