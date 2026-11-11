@@ -11,6 +11,19 @@ void main() {
     SharedPreferences.setMockInitialValues({});
   });
 
+  // Asset-backed widgets use asynchronous bundle loading. Let real async
+  // work complete between frames instead of assuming one 100 ms pump is enough.
+  Future<void> pumpUntilFound(WidgetTester tester, Finder finder) async {
+    for (var attempt = 0; attempt < 40; attempt++) {
+      await tester.runAsync(() async {
+        await Future<void>.delayed(const Duration(milliseconds: 50));
+      });
+      await tester.pump();
+      if (finder.evaluate().isNotEmpty) return;
+    }
+    fail('Widget did not appear after waiting for asynchronous loading: $finder');
+  }
+
   testWidgets('shows the first-launch screen in Arabic', (tester) async {
     await tester.pumpWidget(const NoorApp(firstRun: true));
     await tester.pumpAndSettle();
@@ -89,10 +102,10 @@ void main() {
     await tester.pumpWidget(MaterialApp(
       home: BookDetails(book: ajurrumiyyah, saved: false, onSave: () {}),
     ));
-    await tester.pump();
-    await tester.pump(const Duration(milliseconds: 100));
-
-    expect(find.textContaining('الكلام هو اللفظ المركب المفيد بالوضع'), findsOneWidget);
+    await pumpUntilFound(
+      tester,
+      find.textContaining('الكلام هو اللفظ المركب المفيد بالوضع'),
+    );
     expect(find.textContaining('ويكي مصدر'), findsOneWidget);
   });
 
@@ -107,10 +120,7 @@ void main() {
         bookTitle: 'الآجرومية',
       ),
     ));
-    await tester.pump();
-    await tester.pump(const Duration(milliseconds: 100));
-
-    expect(find.text('فهرس الفصول'), findsOneWidget);
+    await pumpUntilFound(tester, find.text('فهرس الفصول'));
     expect(find.text('متن الآجرومية'), findsOneWidget);
     await tester.enterText(find.byType(TextField), 'الكلام هو');
     await tester.pump();
