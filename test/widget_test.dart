@@ -102,6 +102,14 @@ void main() {
     await tester.pumpWidget(MaterialApp(
       home: BookDetails(book: ajurrumiyyah, saved: false, onSave: () {}),
     ));
+
+    // BookDetails uses a lazy ListView. Scroll the asset-backed section into
+    // view so its FutureBuilder is mounted before waiting for the text.
+    await tester.scrollUntilVisible(
+      find.text('النص الرقمي المرفق'),
+      240,
+      scrollable: find.byType(Scrollable).first,
+    );
     await pumpUntilFound(
       tester,
       find.textContaining('الكلام هو اللفظ المركب المفيد بالوضع'),
@@ -121,7 +129,10 @@ void main() {
       ),
     ));
     await pumpUntilFound(tester, find.text('فهرس الفصول'));
-    expect(find.text('متن الآجرومية'), findsOneWidget);
+
+    // The selected chapter title appears in both the dropdown and the
+    // chapter heading, so two matches are expected before searching.
+    expect(find.text('متن الآجرومية'), findsNWidgets(2));
     await tester.enterText(find.byType(TextField), 'الكلام هو');
     await tester.pump();
     expect(find.textContaining('نتائج البحث'), findsOneWidget);
