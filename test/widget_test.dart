@@ -114,7 +114,14 @@ void main() {
       tester,
       find.textContaining('الكلام هو اللفظ المركب المفيد بالوضع'),
     );
-    expect(find.textContaining('ويكي مصدر'), findsOneWidget);
+    expect(
+      find.text('المصدر: ويكي مصدر، صفحة الآجرومية في النحو، نص مصحح'),
+      findsOneWidget,
+    );
+    expect(
+      find.textContaining('Creative Commons Attribution-ShareAlike (CC BY-SA)'),
+      findsOneWidget,
+    );
   });
 
   testWidgets('structured offline reader supports chapter selection and in-book search', (tester) async {
